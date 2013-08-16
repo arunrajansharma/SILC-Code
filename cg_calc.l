@@ -1,5 +1,5 @@
 %{
-/*LEX program for calculator using Expression Syntax Tree */	
+/*LEX program for calculator using Expression Syntax Tree .*/	
 
 	#include "calc.tab.h"
 	#include<stdlib.h>
