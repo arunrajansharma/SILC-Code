@@ -1,5 +1,5 @@
 %{
-	/* Yacc program for calculator (using expression syntax tree)  */
+	/* Yacc program for generating code for an expression (using expression syntax tree)  */
 
 /*Node type constants*/
 #define EXPR 11
@@ -12,9 +12,12 @@
 #define POW 88
 #define NUM 99
 
-/*Header files*/
+/*Header files */
 #include<stdio.h>
-#include<stdlib.h>
+#include<stdlib.h> 
+
+/*Global file pointer */
+FILE *fp;
 
 /*Data structure of a binary tree (which will be used to implement the expression syntax tree)*/
 struct node
@@ -70,11 +73,17 @@ int calculate(struct node *t);
 %%
 
 program : expr END				{					
-							calculate($1);
-							printf("\nResult : %d\n",ans);
-							exit(1);
+							
+			                                fp = fopen("sil.asm","a");
+							fprintf(fp,"START");
+                                                          calculate($1); 
+							fprintf(fp,"\nOUT R%d",use_reg(1));
+							fprintf(fp,"\nHALT");                                                          
+							fclose(fp);
+                                                           //printf("\nResult : %d\n",an);
+							//exit(1);
 						}
-	;
+	
 
 expr :   expr '+' expr				{$$=makenode(PLUS,$1,$3);	}				
 	| expr '-' expr				{$$=makenode(MINUS,$1,$3);	}
@@ -82,7 +91,7 @@ expr :   expr '+' expr				{$$=makenode(PLUS,$1,$3);	}
 	| expr '/' expr				{$$=makenode(DIV,$1,$3);	}
 	| expr '%' expr				{$$=makenode(REM,$1,$3);	}
 	| '(' expr ')'				{$$=$2;				}
-	| '-' expr %prec UMINUS			{$$=makenode(NEG,$2,NULL);	}
+	| '-' expr %prec UMINUS			{ $$=makenode(NEG,$2,NULL);	}
 	| expr '^' expr 			{$$=makenode(POW,$1,$3);	}		
 	| NUMBER				{$$=makeLeaf(NUM,$1);		}
 
@@ -150,41 +159,46 @@ int calculate(struct node *t)
 		{	
 			calculate(t->left);
 			calculate(t->right);
-			FILE *fp;
-			fp = fopen("sil.asm","a");
-			fprintf(fp,"\nADD R%d,R%d",use_reg(2), use_reg(1));
+ 			fprintf(fp,"\nADD R%d,R%d",use_reg(2), use_reg(1));
 			free_reg(1);		
-			fclose(fp);
+		
 		}
 		else if(t->type==NEG)
 		{
-			int temp = calculate(t->left);
-			temp = temp * -1;
-			ret = temp;
+			calculate(t->left);
+			res_reg(1);
+			fprintf(fp,"\nMOV R%d,-1",use_reg(1));
+			fprintf(fp,"\nMUL R%d,R%d",use_reg(2),use_reg(1));
+			free_reg(1);
 		}
 		
 		else if(t->type==MINUS)
 		{
-			int a = calculate(t->left);
-			int b = calculate(t->right);
+			calculate(t->left);
+			calculate(t->right);
+			fprintf(fp,"\nSUB R%d,R%d",use_reg(2), use_reg(1));
+			free_reg(1);
 		}
 		else if(t->type==MUL)
 		{
-			int a = calculate(t->left);
-			int b = calculate(t->right);
-			ret = a*b;
+			calculate(t->left);
+			calculate(t->right);
+			fprintf(fp,"\nMUL R%d,R%d",use_reg(2), use_reg(1));
+			free_reg(1);
 		}
 		else if(t->type==DIV)
 		{
-			int a = calculate(t->left);
-			int b = calculate(t->right);
-			ret = a/b;
+			calculate(t->left);
+			calculate(t->right);
+			fprintf(fp,"\nDIV R%d,R%d",use_reg(2), use_reg(1));
+			free_reg(1);
 		}
 		else if(t->type==REM)
 		{
-			int a = calculate(t->left);
-			int b = calculate(t->right);
-			ret = a%b;
+			calculate(t->left);
+			calculate(t->right);
+			fprintf(fp,"\nMOD R%d,R%d",use_reg(2), use_reg(1));
+			free_reg(1);
 		}
 		else if(t->type==POW)
 		{
@@ -192,19 +206,11 @@ int calculate(struct node *t)
 			int b = calculate(t->right);
 			ret = (int)power(a,b);
 		}
-		else if(t->type==EXPR)
-		{
-			int a=calculate(t->left);
-			ret = a;
-		}
 		else if(t->type==NUM)
 		{
 			ret = t->num;
-			FILE *fp;
-			fp = fopen("sil.asm","a");
 			res_reg(1);
 			fprintf(fp,"\nMOV R%d,%d",use_reg(1), ret);		
-			fclose(fp);
 		}
 		return 1;
 	}
