@@ -2,7 +2,6 @@
 	/* Yacc program for generating code for an expression (using expression syntax tree)  */
 
 /*Node type constants*/
-#define EXPR 11
 #define PLUS 22
 #define MINUS 33
 #define MUL 44
@@ -29,8 +28,6 @@ struct node
 };
 
 int regcount = 8;
-
-/*Function declarations : */
 
 /*To report an error */
 void yyerror(char *);
@@ -76,12 +73,11 @@ program : expr END				{
 							
 			                                fp = fopen("sil.asm","a");
 							fprintf(fp,"START");
-                                                          calculate($1); 
+                                                        calculate($1); 
 							fprintf(fp,"\nOUT R%d",use_reg(1));
 							fprintf(fp,"\nHALT");                                                          
 							fclose(fp);
-                                                           //printf("\nResult : %d\n",an);
-							//exit(1);
+							exit(1);
 						}
 	
 
