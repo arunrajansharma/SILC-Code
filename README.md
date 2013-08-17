@@ -7,9 +7,6 @@ The objectives of this part of the project is to:
 
 -> Build a compiler for the extended SIL 
 
-
-This is solely for experimental purposes.
-
-For the original syntax of SIL visit : http://athena.nitc.ac.in/~kmurali/Compiler/sil.html 
-and or more information, feel free to contact any of the authors.
+This is solely for experimental purposes. For the original syntax of SIL visit : http://athena.nitc.ac.in/~kmurali/Compiler/sil.html 
+and for more information, feel free to contact any of the authors.
 
