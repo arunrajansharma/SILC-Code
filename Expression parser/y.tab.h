@@ -39,13 +39,25 @@
    enum yytokentype {
      NUMBER = 258,
      END = 259,
-     UMINUS = 260
+     P = 260,
+     M = 261,
+     S = 262,
+     D = 263,
+     C = 264,
+     R = 265,
+     UMINUS = 266
    };
 #endif
 /* Tokens.  */
 #define NUMBER 258
 #define END 259
-#define UMINUS 260
+#define P 260
+#define M 261
+#define S 262
+#define D 263
+#define C 264
+#define R 265
+#define UMINUS 266
 
 
 
@@ -55,16 +67,15 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 55 "cg_calc.y"
+#line 48 "cg_calc.y"
 
 	struct node *ptr;
-	int val;
 	
 
 
 
 /* Line 2068 of yacc.c  */
-#line 68 "y.tab.h"
+#line 79 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

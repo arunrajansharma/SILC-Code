@@ -44,10 +44,6 @@ op 	[-|+|*|/]
 			yylval.ptr->node_type = DIV;			
 			return D;
 		}
-"%"            { yylval.ptr = malloc(sizeof(struct node ));
-                 yylval.ptr->node_type = MOD;
-                 return R;
-                 }
 \^		{
 			yylval.ptr = malloc(sizeof(struct node));
 			yylval.ptr->node_type = POW;			

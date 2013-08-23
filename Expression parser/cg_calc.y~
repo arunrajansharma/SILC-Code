@@ -10,8 +10,6 @@
 #define NEG 77
 #define POW 88
 #define NUM 99
-#define MOD 98
-
 
 /*Header files */
 #include<stdio.h>

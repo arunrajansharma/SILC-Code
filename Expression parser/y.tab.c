@@ -68,10 +68,9 @@
 /* Line 268 of yacc.c  */
 #line 1 "cg_calc.y"
 
-	/* Yacc program for calculator (using expression syntax tree)  */
+	/* Yacc program for generating code for an expression (using expression syntax tree)  */
 
 /*Node type constants*/
-#define EXPR 11
 #define PLUS 22
 #define MINUS 33
 #define MUL 44
@@ -80,6 +79,8 @@
 #define NEG 77
 #define POW 88
 #define NUM 99
+#define MOD 98
+
 
 /*Header files */
 #include<stdio.h>
@@ -91,27 +92,19 @@ FILE *fp;
 /*Data structure of a binary tree (which will be used to implement the expression syntax tree)*/
 struct node
 {
-	int type;
-	int num;
+	int node_type;
+	int val;
 	struct node *left;
 	struct node *right;
 };
 
 int regcount = 8;
 
-/*Function declarations : */
-
 /*To report an error */
 void yyerror(char *);
 
-/*To calculate power*/
-double power(int a, int b);
-
-/*To make a leaf in the tree*/
-struct node* makeLeaf(int type,int num);
-
 /*To make a node in the tree*/
-struct node* makenode(int type,struct node *left, struct node*right);
+struct node* makenode(struct node *parent,struct node *left, struct node*right);
 
 /*To recursively descend the tree and calculate the value of the expression*/
 int calculate(struct node *t);
@@ -120,7 +113,7 @@ int calculate(struct node *t);
 
 
 /* Line 268 of yacc.c  */
-#line 124 "y.tab.c"
+#line 117 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -149,13 +142,25 @@ int calculate(struct node *t);
    enum yytokentype {
      NUMBER = 258,
      END = 259,
-     UMINUS = 260
+     P = 260,
+     M = 261,
+     S = 262,
+     D = 263,
+     C = 264,
+     R = 265,
+     UMINUS = 266
    };
 #endif
 /* Tokens.  */
 #define NUMBER 258
 #define END 259
-#define UMINUS 260
+#define P 260
+#define M 261
+#define S 262
+#define D 263
+#define C 264
+#define R 265
+#define UMINUS 266
 
 
 
@@ -165,16 +170,15 @@ typedef union YYSTYPE
 {
 
 /* Line 293 of yacc.c  */
-#line 55 "cg_calc.y"
+#line 48 "cg_calc.y"
 
 	struct node *ptr;
-	int val;
 	
 
 
 
 /* Line 293 of yacc.c  */
-#line 178 "y.tab.c"
+#line 182 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -186,7 +190,7 @@ typedef union YYSTYPE
 
 
 /* Line 343 of yacc.c  */
-#line 190 "y.tab.c"
+#line 194 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -418,7 +422,7 @@ union yyalloc
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   260
+#define YYMAXUTOK   266
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -429,13 +433,13 @@ static const yytype_uint8 yytranslate[] =
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     9,     2,     2,
-      12,    13,     7,     5,     2,     6,     2,     8,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+      12,    13,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    10,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -452,7 +456,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-      11
+       5,     6,     7,     8,     9,    10,    11
 };
 
 #if YYDEBUG
@@ -468,16 +472,16 @@ static const yytype_uint8 yyprhs[] =
 static const yytype_int8 yyrhs[] =
 {
       15,     0,    -1,    16,     4,    -1,    16,     5,    16,    -1,
-      16,     6,    16,    -1,    16,     7,    16,    -1,    16,     8,
-      16,    -1,    16,     9,    16,    -1,    12,    16,    13,    -1,
-       6,    16,    -1,    16,    10,    16,    -1,     3,    -1
+      16,     6,    16,    -1,    16,     7,    16,    -1,    16,    10,
+      16,    -1,    16,     8,    16,    -1,    12,    16,    13,    -1,
+       6,    16,    -1,    16,     9,    16,    -1,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    75,    75,    88,    89,    90,    91,    92,    93,    94,
-      95,    96
+       0,    67,    67,    79,    80,    81,    82,    83,    84,    85,
+      86,    87
 };
 #endif
 
@@ -486,9 +490,8 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "NUMBER", "END", "'+'", "'-'", "'*'",
-  "'/'", "'%'", "'^'", "UMINUS", "'('", "')'", "$accept", "program",
-  "expr", 0
+  "$end", "error", "$undefined", "NUMBER", "END", "P", "M", "S", "D", "C",
+  "R", "UMINUS", "'('", "')'", "$accept", "program", "expr", 0
 };
 #endif
 
@@ -497,8 +500,8 @@ static const char *const yytname[] =
    token YYLEX-NUM.  */
 static const yytype_uint16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,    43,    45,    42,    47,    37,
-      94,   260,    40,    41
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,   266,    40,    41
 };
 # endif
 
@@ -523,7 +526,7 @@ static const yytype_uint8 yydefact[] =
 {
        0,    11,     0,     0,     0,     0,     9,     0,     1,     2,
        0,     0,     0,     0,     0,     0,     8,     3,     4,     5,
-       6,     7,    10
+       7,    10,     6
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -537,9 +540,9 @@ static const yytype_int8 yydefgoto[] =
 #define YYPACT_NINF -6
 static const yytype_int8 yypact[] =
 {
-      11,    -6,    11,    11,    15,    29,    -6,    19,    -6,    -6,
+      11,    -6,    11,    11,    18,    29,    -6,    19,    -6,    -6,
       11,    11,    11,    11,    11,    11,    -6,    -5,    -5,    -3,
-      -3,     6,     8
+      -3,     6,     9
 };
 
 /* YYPGOTO[NTERM-NUM].  */
@@ -555,7 +558,7 @@ static const yytype_int8 yypgoto[] =
 static const yytype_int8 yytable[] =
 {
        6,     7,    12,    13,    14,    15,    14,    15,    17,    18,
-      19,    20,    21,    22,     1,     8,    15,     2,    -1,     0,
+      19,    20,    21,    22,     1,    -1,    15,     2,     8,    -1,
        0,     0,     0,     3,    10,    11,    12,    13,    14,    15,
        0,     0,    16,     9,    10,    11,    12,    13,    14,    15
 };
@@ -569,7 +572,7 @@ static const yytype_int8 yytable[] =
 static const yytype_int8 yycheck[] =
 {
        2,     3,     7,     8,     9,    10,     9,    10,    10,    11,
-      12,    13,    14,    15,     3,     0,    10,     6,    10,    -1,
+      12,    13,    14,    15,     3,     9,    10,     6,     0,    10,
       -1,    -1,    -1,    12,     5,     6,     7,     8,     9,    10,
       -1,    -1,    13,     4,     5,     6,     7,     8,     9,    10
 };
@@ -1417,87 +1420,86 @@ yyreduce:
         case 2:
 
 /* Line 1806 of yacc.c  */
-#line 75 "cg_calc.y"
+#line 67 "cg_calc.y"
     {					
 							
 			                                fp = fopen("sil.asm","a");
 							fprintf(fp,"START");
-                                                          calculate((yyvsp[(1) - (2)].ptr)); 
+                                                        calculate((yyvsp[(1) - (2)].ptr)); 
 							fprintf(fp,"\nOUT R%d",use_reg(1));
 							fprintf(fp,"\nHALT");                                                          
 							fclose(fp);
-                                                           //printf("\nResult : %d\n",an);
-							//exit(1);
+							exit(1);
 						}
     break;
 
   case 3:
 
 /* Line 1806 of yacc.c  */
-#line 88 "cg_calc.y"
-    {(yyval.ptr)=makenode(PLUS,(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
+#line 79 "cg_calc.y"
+    {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
     break;
 
   case 4:
 
 /* Line 1806 of yacc.c  */
-#line 89 "cg_calc.y"
-    {(yyval.ptr)=makenode(MINUS,(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
+#line 80 "cg_calc.y"
+    {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
     break;
 
   case 5:
 
 /* Line 1806 of yacc.c  */
-#line 90 "cg_calc.y"
-    {(yyval.ptr)=makenode(MUL,(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
+#line 81 "cg_calc.y"
+    {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
     break;
 
   case 6:
 
 /* Line 1806 of yacc.c  */
-#line 91 "cg_calc.y"
-    {(yyval.ptr)=makenode(DIV,(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
+#line 82 "cg_calc.y"
+    {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr)); }
     break;
 
   case 7:
 
 /* Line 1806 of yacc.c  */
-#line 92 "cg_calc.y"
-    {(yyval.ptr)=makenode(REM,(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
+#line 83 "cg_calc.y"
+    {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
     break;
 
   case 8:
 
 /* Line 1806 of yacc.c  */
-#line 93 "cg_calc.y"
-    {(yyval.ptr)=(yyvsp[(2) - (3)].ptr);				}
+#line 84 "cg_calc.y"
+    {(yyval.ptr)=(yyvsp[(2) - (3)].ptr);			}
     break;
 
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 94 "cg_calc.y"
-    { (yyval.ptr)=makenode(NEG,(yyvsp[(2) - (2)].ptr),NULL);	}
+#line 85 "cg_calc.y"
+    {(yyval.ptr)=makenode((yyvsp[(1) - (2)].ptr),(yyvsp[(2) - (2)].ptr),NULL);}
     break;
 
   case 10:
 
 /* Line 1806 of yacc.c  */
-#line 95 "cg_calc.y"
-    {(yyval.ptr)=makenode(POW,(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
+#line 86 "cg_calc.y"
+    {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));	}
     break;
 
   case 11:
 
 /* Line 1806 of yacc.c  */
-#line 96 "cg_calc.y"
-    {(yyval.ptr)=makeLeaf(NUM,(yyvsp[(1) - (1)].val));		}
+#line 87 "cg_calc.y"
+    {(yyval.ptr)=(yyvsp[(1) - (1)].ptr);}
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 1501 "y.tab.c"
+#line 1503 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1728,41 +1730,17 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 101 "cg_calc.y"
+#line 92 "cg_calc.y"
 
 
 #include "lex.yy.c"
 
-double power(int a,int b)
+struct node *makenode(struct node *parent,struct node *left, struct node*right)
 {
-	int i;
-	double c=1;	
-	for(i=0;i<b;i++)
-		c=c*a;
-	return c;
-}
+	parent->left=left;
+	parent->right=right;
 
-struct node* makeLeaf(int type,int num)
-{
-	struct node *ptr=malloc(sizeof(struct node));
-	
-	ptr->type=type;
-	ptr->num=num;
-	ptr->left=NULL;
-	ptr->right=NULL;
-
-	return ptr;
-}
-
-struct node *makenode(int type,struct node *left, struct node*right)
-{
-	struct node *ptr=malloc(sizeof(struct node));
-
-	ptr->type=type;
-	ptr->left=left;
-	ptr->right=right;
-
-	return ptr;
+	return parent;
 }
 
 void res_reg(int no_reg)	
@@ -1786,7 +1764,7 @@ int calculate(struct node *t)
 	if(t!=NULL)
 	{
 		int ret;
-		if(t->type==PLUS)
+		if(t->node_type==PLUS)
 		{	
 			calculate(t->left);
 			calculate(t->right);
@@ -1794,52 +1772,55 @@ int calculate(struct node *t)
 			free_reg(1);		
 		
 		}
-		else if(t->type==NEG)
+		else if(t->node_type==MINUS)
 		{
-			calculate(t->left);
-			res_reg(1);
-			fprintf(fp,"\nMOV R%d,-1",use_reg(1));
-			fprintf(fp,"\nMUL R%d,R%d",use_reg(2),use_reg(1));
-			free_reg(1);
+			if(t->right == NULL)
+			{	
+				calculate(t->left);
+				res_reg(1);
+				fprintf(fp,"\nMOV R%d,-1",use_reg(1));
+				fprintf(fp,"\nMUL R%d,R%d",use_reg(2),use_reg(1));
+				free_reg(1);
+			}
+			else
+			{
+				calculate(t->left);
+				calculate(t->right);
+				fprintf(fp,"\nSUB R%d,R%d",use_reg(2), use_reg(1));
+				free_reg(1);
+			}
 		}
-		
-		else if(t->type==MINUS)
-		{
-			calculate(t->left);
-			calculate(t->right);
-			fprintf(fp,"\nSUB R%d,R%d",use_reg(2), use_reg(1));
-			free_reg(1);
-		}
-		else if(t->type==MUL)
+		else if(t->node_type==MUL)
 		{
 			calculate(t->left);
 			calculate(t->right);
 			fprintf(fp,"\nMUL R%d,R%d",use_reg(2), use_reg(1));
 			free_reg(1);
 		}
-		else if(t->type==DIV)
-		{
-			calculate(t->left);
-			calculate(t->right);
-			fprintf(fp,"\nDIV R%d,R%d",use_reg(2), use_reg(1));
-			free_reg(1);
-		}
-		else if(t->type==REM)
+                else if(t->node_type==MOD)
 		{
 			calculate(t->left);
 			calculate(t->right);
 			fprintf(fp,"\nMOD R%d,R%d",use_reg(2), use_reg(1));
 			free_reg(1);
 		}
-		else if(t->type==POW)
+		else if(t->node_type==DIV)
 		{
-			int a = calculate(t->left);
-			int b = calculate(t->right);
-			ret = (int)power(a,b);
+			calculate(t->left);
+			calculate(t->right);
+			fprintf(fp,"\nDIV R%d,R%d",use_reg(2), use_reg(1));
+			free_reg(1);
 		}
-		else if(t->type==NUM)
+		else if(t->node_type==REM)
 		{
-			ret = t->num;
+			calculate(t->left);
+			calculate(t->right);
+			fprintf(fp,"\nMOD R%d,R%d",use_reg(2), use_reg(1));
+			free_reg(1);
+		}
+		else if(t->node_type==NUM)
+		{
+			ret = t->val;
 			res_reg(1);
 			fprintf(fp,"\nMOV R%d,%d",use_reg(1), ret);		
 		}
