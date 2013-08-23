@@ -21,8 +21,8 @@ FILE *fp;
 /*Data structure of a binary tree (which will be used to implement the expression syntax tree)*/
 struct node
 {
-	int type;
-	int num;
+	int node_type;
+	int val;
 	struct node *left;
 	struct node *right;
 };
@@ -36,10 +36,10 @@ void yyerror(char *);
 double power(int a, int b);
 
 /*To make a leaf in the tree*/
-struct node* makeLeaf(int type,int num);
+struct node* makeLeaf(int node_type,int val);
 
 /*To make a node in the tree*/
-struct node* makenode(int type,struct node *left, struct node*right);
+struct node* makenode(int node_type,struct node *left, struct node*right);
 
 /*To recursively descend the tree and calculate the value of the expression*/
 int calculate(struct node *t);
@@ -51,12 +51,12 @@ int calculate(struct node *t);
 %union 
 {
 	struct node *ptr;
-	int val;
 	
 };
 
-%token <val> NUMBER
-%token END
+%token <ptr> NUMBER
+%token END 
+%token <ptr> P M S D R C
 
 %left '+' '-'
 %left '*' '/'
@@ -81,15 +81,15 @@ program : expr END				{
 						}
 	
 
-expr :   expr '+' expr				{$$=makenode(PLUS,$1,$3);	}				
-	| expr '-' expr				{$$=makenode(MINUS,$1,$3);	}
-	| expr '*' expr				{$$=makenode(MUL,$1,$3);	}
-	| expr '/' expr				{$$=makenode(DIV,$1,$3);	}
-	| expr '%' expr				{$$=makenode(REM,$1,$3);	}
-	| '(' expr ')'				{$$=$2;				}
-	| '-' expr %prec UMINUS			{ $$=makenode(NEG,$2,NULL);	}
-	| expr '^' expr 			{$$=makenode(POW,$1,$3);	}		
-	| NUMBER				{$$=makeLeaf(NUM,$1);		}
+expr :   expr P expr				{$$=makenode($2->node_type,$1,$3);	}				
+	| expr M expr				{$$=makenode($2->node_type,$1,$3);	}
+	| expr S expr				{$$=makenode($2->node_type,$1,$3);	}
+	| expr D expr				{$$=makenode($2->node_type,$1,$3);	}
+	| expr R expr				{$$=makenode($2->node_type,$1,$3);	}
+	| '(' expr ')'				{$$=$2;					}
+	| M expr %prec UMINUS			{$$=makenode($1->node_type,$2,NULL);	}
+	| expr C expr 				{$$=makenode($2->node_type,$1,$3);			}		
+	| NUMBER				{$$=makeLeaf($1->node_type,$1->val);	}
 
 	;
 
@@ -107,23 +107,23 @@ double power(int a,int b)
 	return c;
 }
 
-struct node* makeLeaf(int type,int num)
+struct node* makeLeaf(int node_type,int val)
 {
 	struct node *ptr=malloc(sizeof(struct node));
 	
-	ptr->type=type;
-	ptr->num=num;
+	ptr->node_type=node_type;
+	ptr->val=val;
 	ptr->left=NULL;
 	ptr->right=NULL;
 
 	return ptr;
 }
 
-struct node *makenode(int type,struct node *left, struct node*right)
+struct node *makenode(int node_type,struct node *left, struct node*right)
 {
 	struct node *ptr=malloc(sizeof(struct node));
 
-	ptr->type=type;
+	ptr->node_type=node_type;
 	ptr->left=left;
 	ptr->right=right;
 
@@ -151,7 +151,7 @@ int calculate(struct node *t)
 	if(t!=NULL)
 	{
 		int ret;
-		if(t->type==PLUS)
+		if(t->node_type==PLUS)
 		{	
 			calculate(t->left);
 			calculate(t->right);
@@ -159,7 +159,7 @@ int calculate(struct node *t)
 			free_reg(1);		
 		
 		}
-		else if(t->type==NEG)
+		else if(t->node_type==NEG)
 		{
 			calculate(t->left);
 			res_reg(1);
@@ -168,43 +168,43 @@ int calculate(struct node *t)
 			free_reg(1);
 		}
 		
-		else if(t->type==MINUS)
+		else if(t->node_type==MINUS)
 		{
 			calculate(t->left);
 			calculate(t->right);
 			fprintf(fp,"\nSUB R%d,R%d",use_reg(2), use_reg(1));
 			free_reg(1);
 		}
-		else if(t->type==MUL)
+		else if(t->node_type==MUL)
 		{
 			calculate(t->left);
 			calculate(t->right);
 			fprintf(fp,"\nMUL R%d,R%d",use_reg(2), use_reg(1));
 			free_reg(1);
 		}
-		else if(t->type==DIV)
+		else if(t->node_type==DIV)
 		{
 			calculate(t->left);
 			calculate(t->right);
 			fprintf(fp,"\nDIV R%d,R%d",use_reg(2), use_reg(1));
 			free_reg(1);
 		}
-		else if(t->type==REM)
+		else if(t->node_type==REM)
 		{
 			calculate(t->left);
 			calculate(t->right);
 			fprintf(fp,"\nMOD R%d,R%d",use_reg(2), use_reg(1));
 			free_reg(1);
 		}
-		else if(t->type==POW)
+		else if(t->node_type==POW)
 		{
 			int a = calculate(t->left);
 			int b = calculate(t->right);
 			ret = (int)power(a,b);
 		}
-		else if(t->type==NUM)
+		else if(t->node_type==NUM)
 		{
-			ret = t->num;
+			ret = t->val;
 			res_reg(1);
 			fprintf(fp,"\nMOV R%d,%d",use_reg(1), ret);		
 		}
