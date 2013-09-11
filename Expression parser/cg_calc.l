@@ -1,5 +1,5 @@
 %{
-/*LEX program for parsing expressions and generating code.*/	
+/* LEX program for building a lexical analyzer for expressions */	
 
 	#include "y.tab.h"
 	#include<stdlib.h>
