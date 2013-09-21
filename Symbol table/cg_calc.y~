@@ -207,10 +207,9 @@ void calculate(struct node *t)
 				free_reg(1);
 			}
 			else
-			{	calculate(t->right);
-				fprintf(fp,"\nSUB R%d,R%d",use_reg(2), use_reg(1));
-		       		free_reg(1);
-			}
+				calculate(t->right);
+			fprintf(fp,"\nSUB R%d,R%d",use_reg(2), use_reg(1));
+		       	free_reg(1);
 		}
 		else if(t->node_type==MUL)
 		{

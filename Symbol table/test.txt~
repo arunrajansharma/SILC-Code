@@ -2,4 +2,4 @@ y=-2
 z=-5
 a=-2
 DECLEND
-y*z/a
+y*z+a
