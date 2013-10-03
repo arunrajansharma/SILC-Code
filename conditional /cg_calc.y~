@@ -92,7 +92,7 @@ start : program				    	{
 					   	}
 	;
 
-program : declare END evaluate               	{ 
+program : declare END all_evaluate               	{ 
 							                         struct node * t1 = malloc(sizeof(struct node));
 	                                                t1->node_type = VOID;
 	                                                $$ = makenode(t1,$1,$3); 
