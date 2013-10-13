@@ -101,6 +101,7 @@ struct symbol_table
 } *root = NULL;
 
 int off_set = 0;
+int label = 5;
 
 /*Function for looking up in symbol table  */
 struct symbol_table * Lookup(char* name); 
@@ -125,7 +126,7 @@ void calculate(struct node *t);
 
 
 /* Line 268 of yacc.c  */
-#line 129 "y.tab.c"
+#line 130 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -202,7 +203,7 @@ typedef union YYSTYPE
 {
 
 /* Line 293 of yacc.c  */
-#line 60 "cg_calc.y"
+#line 61 "cg_calc.y"
 
 	struct node *ptr;
 	
@@ -210,7 +211,7 @@ typedef union YYSTYPE
 
 
 /* Line 293 of yacc.c  */
-#line 214 "y.tab.c"
+#line 215 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -222,7 +223,7 @@ typedef union YYSTYPE
 
 
 /* Line 343 of yacc.c  */
-#line 226 "y.tab.c"
+#line 227 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -519,9 +520,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    82,    82,    95,   102,   105,   110,   113,   122,   123,
-     127,   128,   129,   130,   131,   132,   133,   134,   135,   136,
-     139,   140,   141,   144,   147
+       0,    83,    83,    96,   103,   106,   111,   114,   121,   122,
+     126,   127,   128,   129,   130,   131,   132,   133,   134,   135,
+     138,   139,   140,   143,   147
 };
 #endif
 
@@ -1489,7 +1490,7 @@ yyreduce:
         case 2:
 
 /* Line 1806 of yacc.c  */
-#line 82 "cg_calc.y"
+#line 83 "cg_calc.y"
     {		
 			                                fp = fopen("sil.asm","a");
 							fprintf(fp,"START");
@@ -1506,9 +1507,9 @@ yyreduce:
   case 3:
 
 /* Line 1806 of yacc.c  */
-#line 95 "cg_calc.y"
+#line 96 "cg_calc.y"
     { 
-							                         struct node * t1 = malloc(sizeof(struct node));
+							struct node * t1 = malloc(sizeof(struct node));
 	                                                t1->node_type = VOID;
 	                                                (yyval.ptr) = makenode(t1,(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr)); 
                                                	}
@@ -1517,156 +1518,157 @@ yyreduce:
   case 4:
 
 /* Line 1806 of yacc.c  */
-#line 102 "cg_calc.y"
+#line 103 "cg_calc.y"
     { (yyval.ptr)=(yyvsp[(1) - (2)].ptr); }
     break;
 
   case 5:
 
 /* Line 1806 of yacc.c  */
-#line 105 "cg_calc.y"
+#line 106 "cg_calc.y"
     { 
-							                            struct node * t1 = malloc(sizeof(struct node));
-		                                                 t1->node_type = VOID;
-                                                      	(yyval.ptr)=makenode(t1,(yyvsp[(1) - (2)].ptr),(yyvsp[(2) - (2)].ptr)); 
-						                         }
+							struct node * t1 = malloc(sizeof(struct node));
+		                                        t1->node_type = VOID;
+                                                     	(yyval.ptr)=makenode(t1,(yyvsp[(1) - (2)].ptr),(yyvsp[(2) - (2)].ptr)); 
+						}
     break;
 
   case 6:
 
 /* Line 1806 of yacc.c  */
-#line 110 "cg_calc.y"
+#line 111 "cg_calc.y"
     {(yyval.ptr)= NULL;}
     break;
 
   case 7:
 
 /* Line 1806 of yacc.c  */
-#line 113 "cg_calc.y"
+#line 114 "cg_calc.y"
     { 
-						                        	install((yyvsp[(1) - (4)].ptr),4);
+							install((yyvsp[(1) - (4)].ptr),4);
 	                                                (yyval.ptr)=makenode((yyvsp[(2) - (4)].ptr),(yyvsp[(1) - (4)].ptr),(yyvsp[(3) - (4)].ptr)); 
-						                          }
+						}
     break;
 
   case 8:
 
 /* Line 1806 of yacc.c  */
-#line 122 "cg_calc.y"
+#line 121 "cg_calc.y"
     {(yyval.ptr)=(yyvsp[(1) - (2)].ptr);}
     break;
 
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 123 "cg_calc.y"
+#line 122 "cg_calc.y"
     {(yyval.ptr)=(yyvsp[(1) - (2)].ptr);}
     break;
 
   case 10:
 
 /* Line 1806 of yacc.c  */
-#line 127 "cg_calc.y"
+#line 126 "cg_calc.y"
     {(yyval.ptr)= makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
   case 11:
 
 /* Line 1806 of yacc.c  */
-#line 128 "cg_calc.y"
+#line 127 "cg_calc.y"
     {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr)); }
     break;
 
   case 12:
 
 /* Line 1806 of yacc.c  */
-#line 129 "cg_calc.y"
+#line 128 "cg_calc.y"
     {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr)); }
     break;
 
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 130 "cg_calc.y"
+#line 129 "cg_calc.y"
     {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr)); }
     break;
 
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 131 "cg_calc.y"
+#line 130 "cg_calc.y"
     {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr)); }
     break;
 
   case 15:
 
 /* Line 1806 of yacc.c  */
-#line 132 "cg_calc.y"
+#line 131 "cg_calc.y"
     {(yyval.ptr)=(yyvsp[(2) - (3)].ptr);}
     break;
 
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 133 "cg_calc.y"
+#line 132 "cg_calc.y"
     {(yyval.ptr)=makenode((yyvsp[(1) - (2)].ptr),(yyvsp[(2) - (2)].ptr),NULL);}
     break;
 
   case 17:
 
 /* Line 1806 of yacc.c  */
-#line 134 "cg_calc.y"
+#line 133 "cg_calc.y"
     {(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));  }
     break;
 
   case 18:
 
 /* Line 1806 of yacc.c  */
-#line 135 "cg_calc.y"
+#line 134 "cg_calc.y"
     {(yyval.ptr)= (yyvsp[(1) - (1)].ptr);}
     break;
 
   case 19:
 
 /* Line 1806 of yacc.c  */
-#line 136 "cg_calc.y"
+#line 135 "cg_calc.y"
     {(yyval.ptr)= (yyvsp[(1) - (1)].ptr);}
     break;
 
   case 20:
 
 /* Line 1806 of yacc.c  */
-#line 139 "cg_calc.y"
-    {(yyval.ptr)= makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
+#line 138 "cg_calc.y"
+    { (yyval.ptr)= makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
   case 21:
+
+/* Line 1806 of yacc.c  */
+#line 139 "cg_calc.y"
+    { (yyval.ptr)= makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
+    break;
+
+  case 22:
 
 /* Line 1806 of yacc.c  */
 #line 140 "cg_calc.y"
     {(yyval.ptr)= makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
-  case 22:
-
-/* Line 1806 of yacc.c  */
-#line 141 "cg_calc.y"
-    {(yyval.ptr)= makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
-    break;
-
   case 23:
 
 /* Line 1806 of yacc.c  */
-#line 144 "cg_calc.y"
+#line 143 "cg_calc.y"
     { struct node * t1 = malloc(sizeof(struct node));
-	                                              t1->node_type = IF_THEN;
- 						                          (yyval.ptr)=makenode(t1,(yyvsp[(2) - (5)].ptr),(yyvsp[(4) - (5)].ptr));}
+	                                            t1->node_type = IF_THEN;
+ 						    (yyval.ptr)=makenode(t1,(yyvsp[(2) - (5)].ptr),(yyvsp[(4) - (5)].ptr));
+                                         	  }
     break;
 
   case 24:
 
 /* Line 1806 of yacc.c  */
-#line 148 "cg_calc.y"
+#line 147 "cg_calc.y"
     { struct node * t1 = malloc(sizeof(struct node));
                                                    t1->node_type = IF_THEN;
                                                    struct node * t2 = malloc(sizeof(struct node));
@@ -1680,7 +1682,7 @@ yyreduce:
 
 
 /* Line 1806 of yacc.c  */
-#line 1684 "y.tab.c"
+#line 1686 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1911,7 +1913,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 159 "cg_calc.y"
+#line 158 "cg_calc.y"
 
 
 #include "lex.yy.c"
@@ -1959,6 +1961,21 @@ void free_reg(int no_reg)
 int use_reg(int regno)
 {
 	return regcount+regno-1;					
+}
+
+void res_label(int no_label)	
+{
+	label=label-no_label;					//reserves the higher registers
+}
+
+void free_label(int no_label)
+{
+	label=label+no_label;					//frees the lower registers
+}
+
+int use_label(int regno)
+{
+	return label+regno-1;					
 }
 
 void calculate(struct node *t)
@@ -2052,37 +2069,62 @@ void calculate(struct node *t)
                 {   calculate(t->left);
                   
                     calculate(t->right);
-                    fprintf(fp,"\nL1:");
+                    res_label(1);
+                    fprintf(fp,"\nJMP L%d",use_label(1));
+                    
+                    free_label(1);
 
                 }
+
+        else if (t->node_type == IF_THEN_ELSE)
+                {   calculate(t->left);
+                    fprintf(fp,"\nL%d:",use_label(1));        
+                    calculate(t->right);
+                    res_label(1);
+                    fprintf(fp,"\nL%d:",use_label(1));
+                    
+                }
+    
+             
              else if (t->node_type == CONDITIONAL_LT)
                 {     res_reg(2);
+                      res_label(1);
                       calculate(t->left);
                       calculate(t->right);
                       fprintf(fp,"\nLT  R%d,R%d",use_reg(2),use_reg(1));
-                      fprintf(fp,"\nJZ  R%d, L1",use_reg(2));
+                      fprintf(fp,"\nJZ  R%d, L%d",use_reg(2),use_label(1));
+                     // free_label(1);
                       free_reg(2);
                       
-                 }
-                 else if (t->node_type == CONDITIONAL_GT)
+                     
+                } 
+               else if (t->node_type == CONDITIONAL_GT)
                 {     res_reg(2);
+                      res_label(1);
                       calculate(t->left);
                       calculate(t->right);
                       fprintf(fp,"\nGT  R%d,R%d",use_reg(2),use_reg(1));
-                      fprintf(fp,"\nJZ  R%d, L1",use_reg(2));
+                      fprintf(fp,"\nJZ  R%d, L%d",use_reg(2),use_label(1));
+                   //   free_label(1);
                       free_reg(2);
                       
-                 }
-                 else if (t->node_type == CONDITIONAL_EQ)
+                     
+                }
+
+              else if (t->node_type == CONDITIONAL_EQ)
                 {     res_reg(2);
+                      res_label(1);
                       calculate(t->left);
                       calculate(t->right);
                       fprintf(fp,"\nEQ  R%d,R%d",use_reg(2),use_reg(1));
-                      fprintf(fp,"\nJZ  R%d, L1",use_reg(2));
-                      free_reg(2);
-                      
-                 }
+                      fprintf(fp,"\nJZ  R%d, L%d",use_reg(2),use_label(1));
                   
+                     // free_label(1);
+                      free_reg(2);
+                       
+                      
+                     
+                }
 	}
 }	
 	

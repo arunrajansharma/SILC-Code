@@ -1,4 +1,4 @@
 y=2
 z=5
 DECLEND
-if y<z then y*10 endif
+if y<z then y*77 else 100 endif

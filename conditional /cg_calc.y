@@ -32,6 +32,7 @@ struct symbol_table
 } *root = NULL;
 
 int off_set = 0;
+int label = 5;
 
 /*Function for looking up in symbol table  */
 struct symbol_table * Lookup(char* name); 
@@ -93,7 +94,7 @@ start : program				    	{
 	;
 
 program : declare END evaluate               	{ 
-							                         struct node * t1 = malloc(sizeof(struct node));
+							struct node * t1 = malloc(sizeof(struct node));
 	                                                t1->node_type = VOID;
 	                                                $$ = makenode(t1,$1,$3); 
                                                	}
@@ -103,21 +104,19 @@ declare : all_declarations DECLEND		{ $$=$1; }
         ;
 
 all_declarations : declaration all_declarations { 
-							                            struct node * t1 = malloc(sizeof(struct node));
-		                                                 t1->node_type = VOID;
-                                                      	$$=makenode(t1,$1,$2); 
-						                         }
-                 | 				               {$$= NULL;} 
+							struct node * t1 = malloc(sizeof(struct node));
+		                                        t1->node_type = VOID;
+                                                     	$$=makenode(t1,$1,$2); 
+						}
+                 | 				{$$= NULL;} 
                  ;
 
 declaration : ID ASSIGN_OP aexpr END             { 
-						                        	install($1,4);
+							install($1,4);
 	                                                $$=makenode($2,$1,$3); 
-						                          } 
+						} 
                                               
             ;  
-            
-
 
 evaluate   : aexpr END                           {$$=$1;}
            | if_statement END                    {$$=$1;}
@@ -126,26 +125,26 @@ evaluate   : aexpr END                           {$$=$1;}
 
 aexpr : aexpr P aexpr                           {$$= makenode($2,$1,$3);}
      | aexpr M aexpr                            {$$=makenode($2,$1,$3); }
-     | aexpr S aexpr				            {$$=makenode($2,$1,$3); }
-     | aexpr R aexpr 				            {$$=makenode($2,$1,$3); }
-     | aexpr D aexpr 				            {$$=makenode($2,$1,$3); }		
-     |'(' aexpr ')' 				            {$$=$2;}
+     | aexpr S aexpr				{$$=makenode($2,$1,$3); }
+     | aexpr R aexpr 				{$$=makenode($2,$1,$3); }
+     | aexpr D aexpr 				{$$=makenode($2,$1,$3); }		
+     |'(' aexpr ')' 				{$$=$2;}
      | M aexpr %prec UMINUS                     {$$=makenode($1,$2,NULL);}
      | aexpr C aexpr                            {$$=makenode($2,$1,$3);  }
      | NUMBER                                   {$$= $1;}
      | ID                                       {$$= $1;}
      ;
  
-lexpr:aexpr LT aexpr                            {$$= makenode($2,$1,$3);}
-	| aexpr GT aexpr                            {$$= makenode($2,$1,$3);}
-	| aexpr EQ aexpr                            {$$= makenode($2,$1,$3);}
+lexpr   :  aexpr LT aexpr                       { $$= makenode($2,$1,$3);}
+	| aexpr GT aexpr                        { $$= makenode($2,$1,$3);}
+	| aexpr EQ aexpr                        {$$= makenode($2,$1,$3);}
 	;
 
-if_statement : IF lexpr THEN aexpr ENDIF        { struct node * t1 = malloc(sizeof(struct node));
-	                                              t1->node_type = IF_THEN;
- 						                          $$=makenode(t1,$2,$4);}
-             | IF lexpr THEN aexpr ELSE aexpr ENDIF 
-                                                { struct node * t1 = malloc(sizeof(struct node));
+if_statement : IF lexpr THEN aexpr ENDIF          { struct node * t1 = malloc(sizeof(struct node));
+	                                            t1->node_type = IF_THEN;
+ 						    $$=makenode(t1,$2,$4);
+                                         	  }
+             | IF lexpr THEN aexpr ELSE aexpr ENDIF { struct node * t1 = malloc(sizeof(struct node));
                                                    t1->node_type = IF_THEN;
                                                    struct node * t2 = malloc(sizeof(struct node));
                                                    t2 = makenode(t1,$2,$4);
@@ -203,6 +202,21 @@ void free_reg(int no_reg)
 int use_reg(int regno)
 {
 	return regcount+regno-1;					
+}
+
+void res_label(int no_label)	
+{
+	label=label-no_label;					//reserves the higher registers
+}
+
+void free_label(int no_label)
+{
+	label=label+no_label;					//frees the lower registers
+}
+
+int use_label(int regno)
+{
+	return label+regno-1;					
 }
 
 void calculate(struct node *t)
@@ -296,37 +310,62 @@ void calculate(struct node *t)
                 {   calculate(t->left);
                   
                     calculate(t->right);
-                    fprintf(fp,"\nL1:");
+                    res_label(1);
+                    fprintf(fp,"\nJMP L%d",use_label(1));
+                    
+                    free_label(1);
 
                 }
+
+        else if (t->node_type == IF_THEN_ELSE)
+                {   calculate(t->left);
+                    fprintf(fp,"\nL%d:",use_label(1));        
+                    calculate(t->right);
+                    res_label(1);
+                    fprintf(fp,"\nL%d:",use_label(1));
+                    
+                }
+    
+             
              else if (t->node_type == CONDITIONAL_LT)
                 {     res_reg(2);
+                      res_label(1);
                       calculate(t->left);
                       calculate(t->right);
                       fprintf(fp,"\nLT  R%d,R%d",use_reg(2),use_reg(1));
-                      fprintf(fp,"\nJZ  R%d, L1",use_reg(2));
+                      fprintf(fp,"\nJZ  R%d, L%d",use_reg(2),use_label(1));
+                     // free_label(1);
                       free_reg(2);
                       
-                 }
-                 else if (t->node_type == CONDITIONAL_GT)
+                     
+                } 
+               else if (t->node_type == CONDITIONAL_GT)
                 {     res_reg(2);
+                      res_label(1);
                       calculate(t->left);
                       calculate(t->right);
                       fprintf(fp,"\nGT  R%d,R%d",use_reg(2),use_reg(1));
-                      fprintf(fp,"\nJZ  R%d, L1",use_reg(2));
+                      fprintf(fp,"\nJZ  R%d, L%d",use_reg(2),use_label(1));
+                   //   free_label(1);
                       free_reg(2);
                       
-                 }
-                 else if (t->node_type == CONDITIONAL_EQ)
+                     
+                }
+
+              else if (t->node_type == CONDITIONAL_EQ)
                 {     res_reg(2);
+                      res_label(1);
                       calculate(t->left);
                       calculate(t->right);
                       fprintf(fp,"\nEQ  R%d,R%d",use_reg(2),use_reg(1));
-                      fprintf(fp,"\nJZ  R%d, L1",use_reg(2));
-                      free_reg(2);
-                      
-                 }
+                      fprintf(fp,"\nJZ  R%d, L%d",use_reg(2),use_label(1));
                   
+                     // free_label(1);
+                      free_reg(2);
+                       
+                      
+                     
+                }
 	}
 }	
 	

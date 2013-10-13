@@ -87,7 +87,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 60 "cg_calc.y"
+#line 61 "cg_calc.y"
 
 	struct node *ptr;
 	
