@@ -31,7 +31,7 @@ struct node
 	struct node *right;
 };
 
-int regcount = 8;
+int regcount = -1;
 
 /*To report an error */
 void yyerror(char *);
@@ -57,7 +57,7 @@ int variable_binding(char *x);
 
 %token <ptr> NUMBER
 %token END   
-%token <ptr> P M S D C R READ WRITE  ASSIGN_OP ID LT GT EQ
+%token <ptr> P M S D C R READ WRITE ASSIGN_OP ID LT GT EQ
 
 %left P M
 %left S D
@@ -75,35 +75,38 @@ start : program				    	{
 							fprintf(fp,"\nMOV SP,0");
 							fprintf(fp,"\nMOV BP,0");
                                                         calculate($1);
-							
 							fprintf(fp,"\nHALT");                                                          
 							fclose(fp);
 							exit(1);
 					   	}
 	;
-program : stmts                                     {$$=$1; }
-        ;
-stmts :stmts stmt                                    {  struct node * t1 = malloc(sizeof(struct node));
-		                                        t1->node_type = VOID;
-                                                     	$$=makenode(t1,$1,$2); } 
-      |                                              {  $$= NULL;} 
-      ;
-	
-stmt  : ID ASSIGN_OP expr END                     {    $$=makenode($2,$1,$3);}
-      | READ '(' ID ')' END                       {    $$=makenode($1,$3,NULL); }
-      | WRITE '(' expr ')' END                    {    $$=makenode($1,$3,NULL);}
-      ; 
 
-expr :   expr P expr				{$$=makenode($2,$1,$3);	}				
-	| expr M expr				{$$=makenode($2,$1,$3);	}
-	| expr S expr				{$$=makenode($2,$1,$3);	}
-	|expr R expr                            {$$=makenode($2,$1,$3); }
-        | expr D expr				{$$=makenode($2,$1,$3);	}
-	| '(' expr ')'				{$$=$2;			}
-	| M expr %prec UMINUS			{$$=makenode($1,$2,NULL);}
-	| expr C expr 				{$$=makenode($2,$1,$3);	}		
-	| NUMBER				{$$=$1;}
-        | ID                                    {$$=$1;}
+program : stmts                                 {	$$=$1; }
+        ;
+
+stmts 	: stmt stmts				{  
+							struct node * t1 = malloc(sizeof(struct node));
+			                                t1->node_type = VOID;
+                	                               	$$=makenode(t1,$1,$2); 
+						} 
+      	|                                       {  	$$= NULL;} 
+      	;
+	
+stmt  	: ID ASSIGN_OP expr END                 {	$$=makenode($2,$1,$3);}
+      	| READ '(' ID ')' END                   {	$$=makenode($1,$3,NULL);}
+      	| WRITE '(' expr ')' END                {	$$=makenode($1,$3,NULL);}
+      	; 
+
+expr 	:   expr P expr				{	$$=makenode($2,$1,$3);}				
+	| expr M expr				{	$$=makenode($2,$1,$3);}
+	| expr S expr				{	$$=makenode($2,$1,$3);}
+	|expr R expr                            {	$$=makenode($2,$1,$3);}
+        | expr D expr				{	$$=makenode($2,$1,$3);}
+	| '(' expr ')'				{	$$=$2;}
+	| M expr %prec UMINUS			{	$$=makenode($1,$2,NULL);}
+	| expr C expr 				{	$$=makenode($2,$1,$3);}		
+	| NUMBER				{	$$=$1;}
+        | ID                                    {	$$=$1;}
 	;
 
 
@@ -119,35 +122,35 @@ struct node *makenode(struct node *parent,struct node *left, struct node*right)
 	return parent;
 }
 
-void res_reg(int no_reg)	
+void res_reg(int no_reg)			//Reserves a higher numbered register
 {
-	regcount=regcount-no_reg;					//reserves the higher registers
+	regcount = regcount + no_reg;
 }
 
-void free_reg(int no_reg)
+void free_reg(int no_reg)			//Unlocks a higher numbered register
 {
-	regcount=regcount+no_reg;					//frees the lower registers
+	regcount = regcount - no_reg;
 }
 
-int use_reg(int regno)
+int use_reg(int regno)				/* Uses the regno'th lower numbered register of the available reserved registers */
 {
-	return regcount+regno-1;					
+	return regcount-regno+1;		/* Example: Conceptually, use_reg(2) will return R0 if R0 and R1 were reserved i.e. res_reg(2)*/
 }
 
 int variable_binding(char * a)
-{  char x = *a;
-   int y = 0;
-   y = (int)x;
-  return(y-97);
+{  
+	char x = *a;
+	int y = 0;
+   	y = (int)x;
+  	return(y-97);
 }
 
 void calculate(struct node *t)
 {
-
 	if(t!=NULL)
 	{
 		int ret;
-                 if(t->node_type==VOID)
+                if(t->node_type==VOID)
                 {  
 			calculate(t->left); 
 	                calculate(t->right);
@@ -215,7 +218,6 @@ void calculate(struct node *t)
                 else if (t->node_type == VAR)
                 {    
 		        int mptr = variable_binding(t->id);
-
                         res_reg(3);
 			fprintf(fp,"\nMOV R%d,BP",use_reg(2));
 			fprintf(fp,"\nMOV R%d,%d",use_reg(1),mptr);
@@ -235,38 +237,31 @@ void calculate(struct node *t)
                    	fprintf(fp,"\nMOV [R%d],R%d",use_reg(2),use_reg(1));
                    	free_reg(2);
                 }
-                else if(t->node_type == WRITE_NODE)
-                {  calculate(t->left);
-                    fprintf(fp,"\nOUT R%d",use_reg(1));
-                   
-                     
+           	else if(t->node_type == WRITE_NODE)
+                {  	
+			calculate(t->left);
+                    	fprintf(fp,"\nOUT R%d",use_reg(1));
                 }
-             
-               else if(t->node_type == READ_NODE)
-                {    fprintf(fp,"\nIN R%d",use_reg(1));
-                      int mptr = variable_binding(t->left->id);
-
-                        res_reg(3);
-			fprintf(fp,"\nMOV R%d,BP",use_reg(2));
-			fprintf(fp,"\nMOV R%d,%d",use_reg(1),mptr);
-			fprintf(fp,"\nADD R%d,R%d",use_reg(2),use_reg(1));
-			fprintf(fp,"\nMOV [R%d],R%d",use_reg(2),use_reg(4));
-			free_reg(2);
-                  
+           	else if(t->node_type == READ_NODE)
+                {    
+			res_reg(1);			
+			fprintf(fp,"\nIN R%d",use_reg(1));
+                      	int mptr = variable_binding(t->left->id);
+                        res_reg(2);
+			fprintf(fp,"\nMOV R%d,BP",use_reg(1));
+			fprintf(fp,"\nMOV R%d,%d",use_reg(2),mptr);
+			fprintf(fp,"\nADD R%d,R%d",use_reg(1),use_reg(2));
+			fprintf(fp,"\nMOV [R%d],R%d",use_reg(1),use_reg(3));
+			free_reg(3);
                 }
-              
-		
 	}
-	
-	
 }
-		
-
 
 void yyerror(char *s)
 {
 	fprintf(stderr, "%s\n", s);
 }
+
 int yywrap(void)
 {
 	return 1;	
@@ -277,4 +272,3 @@ int main()
 	yyparse();
 	return 0;
 }
-
