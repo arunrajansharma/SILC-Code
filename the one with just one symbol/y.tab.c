@@ -1840,7 +1840,7 @@ void free_reg(int no_reg)			//Unlocks a higher numbered register
 
 int use_reg(int regno)				/* Uses the regno'th lower numbered register of the available reserved registers */
 {
-	return regcount-regno+1;		/* Example: Conceptually, use_reg(2) will return R0 if R0 and R1 were reserved i.e. res_reg(2)*/
+	return regcount-regno+1;		/* Example: Conceptually, use_reg(2) will return R0 if R0 and R1 were reserved i.e. 						         res_reg(2)*/
 }
 
 int variable_binding(char * a)

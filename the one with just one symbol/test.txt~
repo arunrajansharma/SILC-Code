@@ -1,4 +1,7 @@
 read(s)
-z=3
-write(s+4+z) 
+read(a)
+read(b)
+read(c)
+d=s*10
+write(a+b+c+s) 
 
