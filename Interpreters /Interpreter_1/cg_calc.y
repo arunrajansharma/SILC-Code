@@ -1,17 +1,23 @@
 %{
 	/* Yacc program for generating code for an expression (using expression syntax tree)  */
-
-/*Node type constants*/
-#define PLUS 22
-#define MINUS 33
-#define MUL 44
-#define DIV 55
-#define REM 66
-#define NEG 77
-#define POW 88
-#define NUM 99
-#define MOD 98
-#define VOID 103
+     /* Node type constants */
+        #define PLUS 22
+	#define MINUS 33
+	#define MUL 44
+	#define DIV 55
+	#define REM 66
+	#define NEG 77
+	#define POW 88
+	#define NUM 99
+	#define VAR 100  
+	#define ASSIGN 101
+        #define MOD 102	
+        #define VOID 103
+	#define CONDITIONAL_LT 104
+	#define CONDITIONAL_GT 105
+	#define CONDITIONAL_EQ 106 
+        #define READ_NODE 145
+        #define WRITE_NODE 150
 
 
 /*Header files */
@@ -38,6 +44,13 @@ void yyerror(char *);
 
 /*To make a node in the tree*/
 struct node* makenode(struct node *parent,struct node *left, struct node*right);
+
+/*To print the expressoin tree */
+void print_tree(struct node *root);
+
+/* To evealuate the expression tree */
+int evaluate_tree(struct node *root);
+
 
 /*To recursively descend the tree and calculate the value of the expression*/
 void calculate(struct node *t);
@@ -74,7 +87,7 @@ start : program				    	{
 							fprintf(fp,"START");
 							fprintf(fp,"\nMOV SP,0");
 							fprintf(fp,"\nMOV BP,0");
-                                                        calculate($1);
+                                                        print_tree($1);
 							fprintf(fp,"\nHALT");                                                          
 							fclose(fp);
 							exit(1);
@@ -144,6 +157,40 @@ int variable_binding(char * a)
    	y = (int)x;
   	return(y-97);
 }
+
+void print_tree(struct node * root)
+{
+        
+        printf("(");
+        printf(" %d ",root->node_type);
+        if(root->left != NULL)
+        { printf("\n");printf("\t");
+          print_tree(root->left);
+         }
+        if (root->right !=NULL)
+        { printf("\n");printf("\t");
+         print_tree(root->right);
+        }
+        printf(")");
+        
+  
+}
+
+int evaluate_tree(struct node *root)
+{  if(root->node_type == VOID)
+    { evaluate_tree(root->left);
+      evaluate_tree(root->right);
+    }
+   else if(root->node_type == NUM)
+    {  return root->val;
+    }
+   else if(root->node_type == VAR)
+   {
+   
+
+    
+
+
 
 void calculate(struct node *t)
 {

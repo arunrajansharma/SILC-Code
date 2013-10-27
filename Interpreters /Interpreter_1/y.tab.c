@@ -69,18 +69,24 @@
 #line 1 "cg_calc.y"
 
 	/* Yacc program for generating code for an expression (using expression syntax tree)  */
-
-/*Node type constants*/
-#define PLUS 22
-#define MINUS 33
-#define MUL 44
-#define DIV 55
-#define REM 66
-#define NEG 77
-#define POW 88
-#define NUM 99
-#define MOD 98
-#define VOID 103
+     /* Node type constants */
+        #define PLUS 22
+	#define MINUS 33
+	#define MUL 44
+	#define DIV 55
+	#define REM 66
+	#define NEG 77
+	#define POW 88
+	#define NUM 99
+	#define VAR 100  
+	#define ASSIGN 101
+        #define MOD 102	
+        #define VOID 103
+	#define CONDITIONAL_LT 104
+	#define CONDITIONAL_GT 105
+	#define CONDITIONAL_EQ 106 
+        #define READ_NODE 145
+        #define WRITE_NODE 150
 
 
 /*Header files */
@@ -108,6 +114,9 @@ void yyerror(char *);
 /*To make a node in the tree*/
 struct node* makenode(struct node *parent,struct node *left, struct node*right);
 
+/*To print the expressoin tree */
+void print_tree(struct node *root);
+
 /*To recursively descend the tree and calculate the value of the expression*/
 void calculate(struct node *t);
 
@@ -118,7 +127,7 @@ int variable_binding(char *x);
 
 
 /* Line 268 of yacc.c  */
-#line 122 "y.tab.c"
+#line 131 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -189,7 +198,7 @@ typedef union YYSTYPE
 {
 
 /* Line 293 of yacc.c  */
-#line 53 "cg_calc.y"
+#line 62 "cg_calc.y"
 
 	struct node *ptr;
 	
@@ -197,7 +206,7 @@ typedef union YYSTYPE
 
 
 /* Line 293 of yacc.c  */
-#line 201 "y.tab.c"
+#line 210 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -209,7 +218,7 @@ typedef union YYSTYPE
 
 
 /* Line 343 of yacc.c  */
-#line 213 "y.tab.c"
+#line 222 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -503,8 +512,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    72,    72,    84,    87,    92,    95,    96,    97,   100,
-     101,   102,   103,   104,   105,   106,   107,   108,   109
+       0,    81,    81,    93,    96,   101,   104,   105,   106,   109,
+     110,   111,   112,   113,   114,   115,   116,   117,   118
 };
 #endif
 
@@ -1452,13 +1461,13 @@ yyreduce:
         case 2:
 
 /* Line 1806 of yacc.c  */
-#line 72 "cg_calc.y"
+#line 81 "cg_calc.y"
     {		
 			                                fp = fopen("sil.asm","a");
 							fprintf(fp,"START");
 							fprintf(fp,"\nMOV SP,0");
 							fprintf(fp,"\nMOV BP,0");
-                                                        calculate((yyvsp[(1) - (1)].ptr));
+                                                        print_tree((yyvsp[(1) - (1)].ptr));
 							fprintf(fp,"\nHALT");                                                          
 							fclose(fp);
 							exit(1);
@@ -1468,14 +1477,14 @@ yyreduce:
   case 3:
 
 /* Line 1806 of yacc.c  */
-#line 84 "cg_calc.y"
+#line 93 "cg_calc.y"
     {	(yyval.ptr)=(yyvsp[(1) - (1)].ptr); }
     break;
 
   case 4:
 
 /* Line 1806 of yacc.c  */
-#line 87 "cg_calc.y"
+#line 96 "cg_calc.y"
     {  
 							struct node * t1 = malloc(sizeof(struct node));
 			                                t1->node_type = VOID;
@@ -1486,105 +1495,105 @@ yyreduce:
   case 5:
 
 /* Line 1806 of yacc.c  */
-#line 92 "cg_calc.y"
+#line 101 "cg_calc.y"
     {  	(yyval.ptr)= NULL;}
     break;
 
   case 6:
 
 /* Line 1806 of yacc.c  */
-#line 95 "cg_calc.y"
+#line 104 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(2) - (4)].ptr),(yyvsp[(1) - (4)].ptr),(yyvsp[(3) - (4)].ptr));}
     break;
 
   case 7:
 
 /* Line 1806 of yacc.c  */
-#line 96 "cg_calc.y"
+#line 105 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(1) - (5)].ptr),(yyvsp[(3) - (5)].ptr),NULL);}
     break;
 
   case 8:
 
 /* Line 1806 of yacc.c  */
-#line 97 "cg_calc.y"
+#line 106 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(1) - (5)].ptr),(yyvsp[(3) - (5)].ptr),NULL);}
     break;
 
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 100 "cg_calc.y"
+#line 109 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
   case 10:
 
 /* Line 1806 of yacc.c  */
-#line 101 "cg_calc.y"
+#line 110 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
   case 11:
 
 /* Line 1806 of yacc.c  */
-#line 102 "cg_calc.y"
+#line 111 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
   case 12:
 
 /* Line 1806 of yacc.c  */
-#line 103 "cg_calc.y"
+#line 112 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 104 "cg_calc.y"
+#line 113 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 105 "cg_calc.y"
+#line 114 "cg_calc.y"
     {	(yyval.ptr)=(yyvsp[(2) - (3)].ptr);}
     break;
 
   case 15:
 
 /* Line 1806 of yacc.c  */
-#line 106 "cg_calc.y"
+#line 115 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(1) - (2)].ptr),(yyvsp[(2) - (2)].ptr),NULL);}
     break;
 
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 107 "cg_calc.y"
+#line 116 "cg_calc.y"
     {	(yyval.ptr)=makenode((yyvsp[(2) - (3)].ptr),(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr));}
     break;
 
   case 17:
 
 /* Line 1806 of yacc.c  */
-#line 108 "cg_calc.y"
+#line 117 "cg_calc.y"
     {	(yyval.ptr)=(yyvsp[(1) - (1)].ptr);}
     break;
 
   case 18:
 
 /* Line 1806 of yacc.c  */
-#line 109 "cg_calc.y"
+#line 118 "cg_calc.y"
     {	(yyval.ptr)=(yyvsp[(1) - (1)].ptr);}
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 1588 "y.tab.c"
+#line 1597 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1815,7 +1824,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 113 "cg_calc.y"
+#line 122 "cg_calc.y"
 
 
 #include "lex.yy.c"
@@ -1840,7 +1849,7 @@ void free_reg(int no_reg)			//Unlocks a higher numbered register
 
 int use_reg(int regno)				/* Uses the regno'th lower numbered register of the available reserved registers */
 {
-	return regcount-regno+1;		/* Example: Conceptually, use_reg(2) will return R0 if R0 and R1 were reserved i.e. res_reg(2)*/
+	return regcount-regno+1;		/* Example: Conceptually, use_reg(2) will return R0 if R0 and R1 were reserved i.e. 						         res_reg(2)*/
 }
 
 int variable_binding(char * a)
@@ -1849,6 +1858,24 @@ int variable_binding(char * a)
 	int y = 0;
    	y = (int)x;
   	return(y-97);
+}
+
+void print_tree(struct node * root)
+{
+        
+        printf("(");
+        printf(" %d ",root->node_type);
+        if(root->left != NULL)
+        { printf("\n");printf("\t");
+          print_tree(root->left);
+         }
+        if (root->right !=NULL)
+        { printf("\n");printf("\t");
+         print_tree(root->right);
+        }
+        printf(")");
+        
+  
 }
 
 void calculate(struct node *t)
