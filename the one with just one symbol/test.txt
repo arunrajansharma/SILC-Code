@@ -1,4 +1,2 @@
-read(s)
-z=3
-write(s+4+z) 
-
+z=-3
+write(z)

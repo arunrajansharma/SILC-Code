@@ -1,507 +1,458 @@
-Terminals unused in grammar
+   0  $accept : start $end
 
-   LT
-   GT
-   EQ
+   1  start : program
 
+   2  program : stmts
 
-Grammar
+   3  stmts : stmt stmts
+   4        |
 
-    0 $accept: start $end
+   5  stmt : ID ASSIGN_OP expr END
+   6       | READ '(' ID ')' END
+   7       | WRITE '(' expr ')' END
 
-    1 start: program
-
-    2 program: stmts
-
-    3 stmts: stmts stmt
-    4      | /* empty */
-
-    5 stmt: ID ASSIGN_OP expr END
-    6     | READ '(' ID ')' END
-    7     | WRITE '(' expr ')' END
-
-    8 expr: expr P expr
-    9     | expr M expr
-   10     | expr S expr
-   11     | expr R expr
-   12     | expr D expr
-   13     | '(' expr ')'
-   14     | M expr
-   15     | expr C expr
-   16     | NUMBER
-   17     | ID
-
-
-Terminals, with rules where they appear
-
-$end (0) 0
-'(' (40) 6 7 13
-')' (41) 6 7 13
-error (256)
-NUMBER (258) 16
-END (259) 5 6 7
-P (260) 8
-M (261) 9 14
-S (262) 10
-D (263) 12
-C (264) 15
-R (265) 11
-READ (266) 6
-WRITE (267) 7
-ASSIGN_OP (268) 5
-ID (269) 5 6 17
-LT (270)
-GT (271)
-EQ (272)
-UMINUS (273)
-
-
-Nonterminals, with rules where they appear
-
-$accept (21)
-    on left: 0
-start (22)
-    on left: 1, on right: 0
-program (23)
-    on left: 2, on right: 1
-stmts (24)
-    on left: 3 4, on right: 2 3
-stmt (25)
-    on left: 5 6 7, on right: 3
-expr (26)
-    on left: 8 9 10 11 12 13 14 15 16 17, on right: 5 7 8 9 10 11 12
-    13 14 15
-
-
+   8  expr : expr P expr
+   9       | expr M expr
+  10       | expr S expr
+  11       | expr R expr
+  12       | expr D expr
+  13       | '(' expr ')'
+  14       | M expr
+  15       | expr C expr
+  16       | NUMBER
+  17       | ID
+
 state 0
+	$accept : . start $end  (0)
+	stmts : .  (4)
 
-    0 $accept: . start $end
+	READ  shift 1
+	WRITE  shift 2
+	ID  shift 3
+	$end  reduce 4
 
-    $default  reduce using rule 4 (stmts)
-
-    start    go to state 1
-    program  go to state 2
-    stmts    go to state 3
+	start  goto 4
+	stmts  goto 5
+	stmt  goto 6
+	program  goto 7
 
 
 state 1
+	stmt : READ . '(' ID ')' END  (6)
 
-    0 $accept: start . $end
-
-    $end  shift, and go to state 4
+	'('  shift 8
+	.  error
 
 
 state 2
+	stmt : WRITE . '(' expr ')' END  (7)
 
-    1 start: program .
-
-    $default  reduce using rule 1 (start)
+	'('  shift 9
+	.  error
 
 
 state 3
+	stmt : ID . ASSIGN_OP expr END  (5)
 
-    2 program: stmts .
-    3 stmts: stmts . stmt
-
-    READ   shift, and go to state 5
-    WRITE  shift, and go to state 6
-    ID     shift, and go to state 7
-
-    $default  reduce using rule 2 (program)
-
-    stmt  go to state 8
+	ASSIGN_OP  shift 10
+	.  error
 
 
 state 4
+	$accept : start . $end  (0)
 
-    0 $accept: start $end .
-
-    $default  accept
+	$end  accept
 
 
 state 5
+	program : stmts .  (2)
 
-    6 stmt: READ . '(' ID ')' END
-
-    '('  shift, and go to state 9
+	.  reduce 2
 
 
 state 6
+	stmts : stmt . stmts  (3)
+	stmts : .  (4)
 
-    7 stmt: WRITE . '(' expr ')' END
+	READ  shift 1
+	WRITE  shift 2
+	ID  shift 3
+	$end  reduce 4
 
-    '('  shift, and go to state 10
+	stmts  goto 11
+	stmt  goto 6
 
 
 state 7
+	start : program .  (1)
 
-    5 stmt: ID . ASSIGN_OP expr END
-
-    ASSIGN_OP  shift, and go to state 11
+	.  reduce 1
 
 
 state 8
+	stmt : READ '(' . ID ')' END  (6)
 
-    3 stmts: stmts stmt .
-
-    $default  reduce using rule 3 (stmts)
+	ID  shift 12
+	.  error
 
 
 state 9
+	stmt : WRITE '(' . expr ')' END  (7)
 
-    6 stmt: READ '(' . ID ')' END
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    ID  shift, and go to state 12
+	expr  goto 17
 
 
 state 10
+	stmt : ID ASSIGN_OP . expr END  (5)
 
-    7 stmt: WRITE '(' . expr ')' END
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 17
+	expr  goto 18
 
 
 state 11
+	stmts : stmt stmts .  (3)
 
-    5 stmt: ID ASSIGN_OP . expr END
-
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 18
+	.  reduce 3
 
 
 state 12
+	stmt : READ '(' ID . ')' END  (6)
 
-    6 stmt: READ '(' ID . ')' END
-
-    ')'  shift, and go to state 19
+	')'  shift 19
+	.  error
 
 
 state 13
+	expr : NUMBER .  (16)
 
-   16 expr: NUMBER .
-
-    $default  reduce using rule 16 (expr)
+	.  reduce 16
 
 
 state 14
+	expr : M . expr  (14)
 
-   14 expr: M . expr
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 20
+	expr  goto 20
 
 
 state 15
+	expr : ID .  (17)
 
-   17 expr: ID .
-
-    $default  reduce using rule 17 (expr)
+	.  reduce 17
 
 
 state 16
+	expr : '(' . expr ')'  (13)
 
-   13 expr: '(' . expr ')'
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 21
+	expr  goto 21
 
 
 state 17
+	stmt : WRITE '(' expr . ')' END  (7)
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : expr . C expr  (15)
 
-    7 stmt: WRITE '(' expr . ')' END
-    8 expr: expr . P expr
-    9     | expr . M expr
-   10     | expr . S expr
-   11     | expr . R expr
-   12     | expr . D expr
-   15     | expr . C expr
-
-    P    shift, and go to state 22
-    M    shift, and go to state 23
-    S    shift, and go to state 24
-    D    shift, and go to state 25
-    C    shift, and go to state 26
-    R    shift, and go to state 27
-    ')'  shift, and go to state 28
+	P  shift 22
+	M  shift 23
+	S  shift 24
+	D  shift 25
+	C  shift 26
+	R  shift 27
+	')'  shift 28
+	.  error
 
 
 state 18
+	stmt : ID ASSIGN_OP expr . END  (5)
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : expr . C expr  (15)
 
-    5 stmt: ID ASSIGN_OP expr . END
-    8 expr: expr . P expr
-    9     | expr . M expr
-   10     | expr . S expr
-   11     | expr . R expr
-   12     | expr . D expr
-   15     | expr . C expr
-
-    END  shift, and go to state 29
-    P    shift, and go to state 22
-    M    shift, and go to state 23
-    S    shift, and go to state 24
-    D    shift, and go to state 25
-    C    shift, and go to state 26
-    R    shift, and go to state 27
+	END  shift 29
+	P  shift 22
+	M  shift 23
+	S  shift 24
+	D  shift 25
+	C  shift 26
+	R  shift 27
+	.  error
 
 
 state 19
+	stmt : READ '(' ID ')' . END  (6)
 
-    6 stmt: READ '(' ID ')' . END
-
-    END  shift, and go to state 30
+	END  shift 30
+	.  error
 
 
 state 20
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : M expr .  (14)
+	expr : expr . C expr  (15)
 
-    8 expr: expr . P expr
-    9     | expr . M expr
-   10     | expr . S expr
-   11     | expr . R expr
-   12     | expr . D expr
-   14     | M expr .
-   15     | expr . C expr
-
-    $default  reduce using rule 14 (expr)
+	.  reduce 14
 
 
 state 21
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : '(' expr . ')'  (13)
+	expr : expr . C expr  (15)
 
-    8 expr: expr . P expr
-    9     | expr . M expr
-   10     | expr . S expr
-   11     | expr . R expr
-   12     | expr . D expr
-   13     | '(' expr . ')'
-   15     | expr . C expr
-
-    P    shift, and go to state 22
-    M    shift, and go to state 23
-    S    shift, and go to state 24
-    D    shift, and go to state 25
-    C    shift, and go to state 26
-    R    shift, and go to state 27
-    ')'  shift, and go to state 31
+	P  shift 22
+	M  shift 23
+	S  shift 24
+	D  shift 25
+	C  shift 26
+	R  shift 27
+	')'  shift 31
+	.  error
 
 
 state 22
+	expr : expr P . expr  (8)
 
-    8 expr: expr P . expr
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 32
+	expr  goto 32
 
 
 state 23
+	expr : expr M . expr  (9)
 
-    9 expr: expr M . expr
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 33
+	expr  goto 33
 
 
 state 24
+	expr : expr S . expr  (10)
 
-   10 expr: expr S . expr
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 34
+	expr  goto 34
 
 
 state 25
+	expr : expr D . expr  (12)
 
-   12 expr: expr D . expr
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 35
+	expr  goto 35
 
 
 state 26
+	expr : expr C . expr  (15)
 
-   15 expr: expr C . expr
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 36
+	expr  goto 36
 
 
 state 27
+	expr : expr R . expr  (11)
 
-   11 expr: expr R . expr
+	NUMBER  shift 13
+	M  shift 14
+	ID  shift 15
+	'('  shift 16
+	.  error
 
-    NUMBER  shift, and go to state 13
-    M       shift, and go to state 14
-    ID      shift, and go to state 15
-    '('     shift, and go to state 16
-
-    expr  go to state 37
+	expr  goto 37
 
 
 state 28
+	stmt : WRITE '(' expr ')' . END  (7)
 
-    7 stmt: WRITE '(' expr ')' . END
-
-    END  shift, and go to state 38
+	END  shift 38
+	.  error
 
 
 state 29
+	stmt : ID ASSIGN_OP expr END .  (5)
 
-    5 stmt: ID ASSIGN_OP expr END .
-
-    $default  reduce using rule 5 (stmt)
+	.  reduce 5
 
 
 state 30
+	stmt : READ '(' ID ')' END .  (6)
 
-    6 stmt: READ '(' ID ')' END .
-
-    $default  reduce using rule 6 (stmt)
+	.  reduce 6
 
 
 state 31
+	expr : '(' expr ')' .  (13)
 
-   13 expr: '(' expr ')' .
-
-    $default  reduce using rule 13 (expr)
+	.  reduce 13
 
 
 state 32
+	expr : expr . P expr  (8)
+	expr : expr P expr .  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : expr . C expr  (15)
 
-    8 expr: expr . P expr
-    8     | expr P expr .
-    9     | expr . M expr
-   10     | expr . S expr
-   11     | expr . R expr
-   12     | expr . D expr
-   15     | expr . C expr
-
-    S  shift, and go to state 24
-    D  shift, and go to state 25
-    C  shift, and go to state 26
-    R  shift, and go to state 27
-
-    $default  reduce using rule 8 (expr)
+	S  shift 24
+	D  shift 25
+	C  shift 26
+	R  shift 27
+	END  reduce 8
+	P  reduce 8
+	M  reduce 8
+	')'  reduce 8
 
 
 state 33
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr M expr .  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : expr . C expr  (15)
 
-    8 expr: expr . P expr
-    9     | expr . M expr
-    9     | expr M expr .
-   10     | expr . S expr
-   11     | expr . R expr
-   12     | expr . D expr
-   15     | expr . C expr
-
-    S  shift, and go to state 24
-    D  shift, and go to state 25
-    C  shift, and go to state 26
-    R  shift, and go to state 27
-
-    $default  reduce using rule 9 (expr)
+	S  shift 24
+	D  shift 25
+	C  shift 26
+	R  shift 27
+	END  reduce 9
+	P  reduce 9
+	M  reduce 9
+	')'  reduce 9
 
 
 state 34
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr S expr .  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : expr . C expr  (15)
 
-    8 expr: expr . P expr
-    9     | expr . M expr
-   10     | expr . S expr
-   10     | expr S expr .
-   11     | expr . R expr
-   12     | expr . D expr
-   15     | expr . C expr
-
-    C  shift, and go to state 26
-    R  shift, and go to state 27
-
-    $default  reduce using rule 10 (expr)
+	C  shift 26
+	R  shift 27
+	END  reduce 10
+	P  reduce 10
+	M  reduce 10
+	S  reduce 10
+	D  reduce 10
+	')'  reduce 10
 
 
 state 35
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : expr D expr .  (12)
+	expr : expr . C expr  (15)
 
-    8 expr: expr . P expr
-    9     | expr . M expr
-   10     | expr . S expr
-   11     | expr . R expr
-   12     | expr . D expr
-   12     | expr D expr .
-   15     | expr . C expr
-
-    C  shift, and go to state 26
-    R  shift, and go to state 27
-
-    $default  reduce using rule 12 (expr)
+	C  shift 26
+	R  shift 27
+	END  reduce 12
+	P  reduce 12
+	M  reduce 12
+	S  reduce 12
+	D  reduce 12
+	')'  reduce 12
 
 
 state 36
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr . D expr  (12)
+	expr : expr . C expr  (15)
+	expr : expr C expr .  (15)
 
-    8 expr: expr . P expr
-    9     | expr . M expr
-   10     | expr . S expr
-   11     | expr . R expr
-   12     | expr . D expr
-   15     | expr . C expr
-   15     | expr C expr .
-
-    R  shift, and go to state 27
-
-    C  error (nonassociative)
-
-    $default  reduce using rule 15 (expr)
+	R  shift 27
+	END  reduce 15
+	P  reduce 15
+	M  reduce 15
+	S  reduce 15
+	D  reduce 15
+	')'  reduce 15
 
 
 state 37
+	expr : expr . P expr  (8)
+	expr : expr . M expr  (9)
+	expr : expr . S expr  (10)
+	expr : expr . R expr  (11)
+	expr : expr R expr .  (11)
+	expr : expr . D expr  (12)
+	expr : expr . C expr  (15)
 
-    8 expr: expr . P expr
-    9     | expr . M expr
-   10     | expr . S expr
-   11     | expr . R expr
-   11     | expr R expr .
-   12     | expr . D expr
-   15     | expr . C expr
-
-    R  error (nonassociative)
-
-    $default  reduce using rule 11 (expr)
+	.  reduce 11
 
 
 state 38
+	stmt : WRITE '(' expr ')' END .  (7)
 
-    7 stmt: WRITE '(' expr ')' END .
+	.  reduce 7
 
-    $default  reduce using rule 7 (stmt)
+
+20 terminals, 6 nonterminals
+18 grammar rules, 39 states

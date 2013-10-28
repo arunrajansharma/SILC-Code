@@ -32,7 +32,7 @@ alpha   [a-z]
 %%
 
 
-[\n]       	{ return END;}
+[\n]       { return END;}
 " "             ;
 "+"		{
 			yylval.ptr = malloc(sizeof(struct node));			
