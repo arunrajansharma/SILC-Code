@@ -4,17 +4,17 @@
 	#include "y.tab.h"
 	#include<stdlib.h>
 	#include<stdio.h>
-      
 	
+     
 %}
 
 
 number  [0-9]+
-alpha   [a-z]+
+alpha   [a-z]
 	
 
 %%
-"DECLEND"   { return  DECLEND ;}
+
 
 [\n]       { return END;}
 " "             ;
@@ -43,21 +43,21 @@ alpha   [a-z]+
                         yylval.ptr->node_type = MOD;
                         return R;
                  }
-"read"          {       yylval.ptr = malloc(sizeof(struct node));
-			yylval.ptr->node_type = READ_NODE;			
-			return READ;
-                
-                }
-"write"        {        yylval.ptr = malloc(sizeof(struct node));
-			yylval.ptr->node_type = WRITE_NODE;			
-			return WRITE;
-
-               }
 \^		{
 			yylval.ptr = malloc(sizeof(struct node));
 			yylval.ptr->node_type = POW;			
 			return C;
 		}
+"read"         {        yylval.ptr = malloc(sizeof(struct node));
+			yylval.ptr->node_type = READ_NODE;			
+			return READ;
+                
+               }
+"write"        {        yylval.ptr = malloc(sizeof(struct node));
+			yylval.ptr->node_type = WRITE_NODE;			
+			return WRITE;
+
+               }
 
 {alpha}        {        
                       
@@ -68,7 +68,8 @@ alpha   [a-z]+
                         yylval.ptr->left = NULL;
 	 	        yylval.ptr->right = NULL;
 		        return ID;
-		 }	
+	       }
+	
 		 
 "="              {     yylval.ptr = malloc(sizeof(struct node));
 		       yylval.ptr->node_type = ASSIGN;
@@ -76,8 +77,6 @@ alpha   [a-z]+
 	 	       yylval.ptr->right = NULL;
 		       return ASSIGN_OP;
 		 }
-
-
 		  
 {number}	 {
 			yylval.ptr = malloc(sizeof(struct node));
@@ -87,6 +86,37 @@ alpha   [a-z]+
 			yylval.ptr->right = NULL;
 			return NUMBER;
 		 }
+
+"<"              {     yylval.ptr = malloc(sizeof(struct node));
+		       yylval.ptr->node_type = CONDITIONAL_LT;
+                       yylval.ptr->left = NULL;
+	 	       yylval.ptr->right = NULL;
+		       return LT;
+
+                 }
+
+">"              {     yylval.ptr = malloc(sizeof(struct node));
+		       yylval.ptr->node_type = CONDITIONAL_GT;
+                       yylval.ptr->left = NULL;
+	 	       yylval.ptr->right = NULL;
+		       return GT;
+
+                 }
+
+"=="              {    yylval.ptr = malloc(sizeof(struct node));
+		       yylval.ptr->node_type = CONDITIONAL_EQ;
+                       yylval.ptr->left = NULL;
+	 	       yylval.ptr->right = NULL;
+		       return EQ;
+
+                 }
+
+
+
+
+
+
+
 
 [\(\)] 	return *yytext;
 

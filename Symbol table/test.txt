@@ -1,5 +1,6 @@
-y=-2
-z=-5
-a=-2
+y=2
+read(x)
+arun=5
 DECLEND
-y*z/a
+write(y*x*arun)
+

@@ -39,35 +39,39 @@
    enum yytokentype {
      NUMBER = 258,
      END = 259,
-     DECLEND = 260,
-     P = 261,
-     M = 262,
-     S = 263,
-     D = 264,
-     C = 265,
-     R = 266,
-     ID = 267,
+     P = 260,
+     M = 261,
+     S = 262,
+     D = 263,
+     C = 264,
+     R = 265,
+     READ = 266,
+     WRITE = 267,
      ASSIGN_OP = 268,
-     WRITE = 269,
-     READ = 270,
-     UMINUS = 271
+     ID = 269,
+     LT = 270,
+     GT = 271,
+     EQ = 272,
+     UMINUS = 273
    };
 #endif
 /* Tokens.  */
 #define NUMBER 258
 #define END 259
-#define DECLEND 260
-#define P 261
-#define M 262
-#define S 263
-#define D 264
-#define C 265
-#define R 266
-#define ID 267
+#define P 260
+#define M 261
+#define S 262
+#define D 263
+#define C 264
+#define R 265
+#define READ 266
+#define WRITE 267
 #define ASSIGN_OP 268
-#define WRITE 269
-#define READ 270
-#define UMINUS 271
+#define ID 269
+#define LT 270
+#define GT 271
+#define EQ 272
+#define UMINUS 273
 
 
 
@@ -77,7 +81,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 73 "cg_calc.y"
+#line 62 "cg_calc.y"
 
 	struct node *ptr;
 	
@@ -85,7 +89,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 89 "y.tab.h"
+#line 93 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
