@@ -1,0 +1,4 @@
+arun=70;
+if(arun<90) then 
+write(100);
+ endif;

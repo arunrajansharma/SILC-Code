@@ -1,0 +1,6 @@
+y=2
+read(x)
+arun=5
+DECLEND
+write(y*x)
+
