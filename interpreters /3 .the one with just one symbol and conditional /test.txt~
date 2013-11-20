@@ -1,0 +1,6 @@
+x = 7;
+while(x<8)
+do 
+write(x*10);
+x = x+1;
+endwhile;

@@ -1,0 +1,4 @@
+x=4+2;
+y=x;
+read(c);
+write(y);
