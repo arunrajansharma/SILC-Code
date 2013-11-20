@@ -1,0 +1,328 @@
+Grammar
+
+    0 $accept: program $end
+
+    1 program: expr END
+
+    2 expr: expr P expr
+    3     | expr S expr
+    4     | expr M expr
+    5     | expr R expr
+    6     | expr D expr
+    7     | '(' expr ')'
+    8     | S expr
+    9     | expr C expr
+   10     | NUMBER
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 7
+')' (41) 7
+error (256)
+NUMBER (258) 10
+END (259) 1
+P (260) 2
+M (261) 4
+S (262) 3 8
+D (263) 6
+C (264) 9
+R (265) 5
+UMINUS (266)
+
+
+Nonterminals, with rules where they appear
+
+$accept (14)
+    on left: 0
+program (15)
+    on left: 1, on right: 0
+expr (16)
+    on left: 2 3 4 5 6 7 8 9 10, on right: 1 2 3 4 5 6 7 8 9
+
+
+state 0
+
+    0 $accept: . program $end
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    program  go to state 4
+    expr     go to state 5
+
+
+state 1
+
+   10 expr: NUMBER .
+
+    $default  reduce using rule 10 (expr)
+
+
+state 2
+
+    8 expr: S . expr
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    expr  go to state 6
+
+
+state 3
+
+    7 expr: '(' . expr ')'
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    expr  go to state 7
+
+
+state 4
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 8
+
+
+state 5
+
+    1 program: expr . END
+    2 expr: expr . P expr
+    3     | expr . S expr
+    4     | expr . M expr
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
+
+    END  shift, and go to state 9
+    P    shift, and go to state 10
+    M    shift, and go to state 11
+    S    shift, and go to state 12
+    D    shift, and go to state 13
+    C    shift, and go to state 14
+    R    shift, and go to state 15
+
+
+state 6
+
+    2 expr: expr . P expr
+    3     | expr . S expr
+    4     | expr . M expr
+    5     | expr . R expr
+    6     | expr . D expr
+    8     | S expr .
+    9     | expr . C expr
+
+    $default  reduce using rule 8 (expr)
+
+
+state 7
+
+    2 expr: expr . P expr
+    3     | expr . S expr
+    4     | expr . M expr
+    5     | expr . R expr
+    6     | expr . D expr
+    7     | '(' expr . ')'
+    9     | expr . C expr
+
+    P    shift, and go to state 10
+    M    shift, and go to state 11
+    S    shift, and go to state 12
+    D    shift, and go to state 13
+    C    shift, and go to state 14
+    R    shift, and go to state 15
+    ')'  shift, and go to state 16
+
+
+state 8
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+state 9
+
+    1 program: expr END .
+
+    $default  reduce using rule 1 (program)
+
+
+state 10
+
+    2 expr: expr P . expr
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    expr  go to state 17
+
+
+state 11
+
+    4 expr: expr M . expr
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    expr  go to state 18
+
+
+state 12
+
+    3 expr: expr S . expr
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    expr  go to state 19
+
+
+state 13
+
+    6 expr: expr D . expr
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    expr  go to state 20
+
+
+state 14
+
+    9 expr: expr C . expr
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    expr  go to state 21
+
+
+state 15
+
+    5 expr: expr R . expr
+
+    NUMBER  shift, and go to state 1
+    S       shift, and go to state 2
+    '('     shift, and go to state 3
+
+    expr  go to state 22
+
+
+state 16
+
+    7 expr: '(' expr ')' .
+
+    $default  reduce using rule 7 (expr)
+
+
+state 17
+
+    2 expr: expr . P expr
+    2     | expr P expr .
+    3     | expr . S expr
+    4     | expr . M expr
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
+
+    M  shift, and go to state 11
+    D  shift, and go to state 13
+    C  shift, and go to state 14
+    R  shift, and go to state 15
+
+    $default  reduce using rule 2 (expr)
+
+
+state 18
+
+    2 expr: expr . P expr
+    3     | expr . S expr
+    4     | expr . M expr
+    4     | expr M expr .
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
+
+    C  shift, and go to state 14
+    R  shift, and go to state 15
+
+    $default  reduce using rule 4 (expr)
+
+
+state 19
+
+    2 expr: expr . P expr
+    3     | expr . S expr
+    3     | expr S expr .
+    4     | expr . M expr
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
+
+    M  shift, and go to state 11
+    D  shift, and go to state 13
+    C  shift, and go to state 14
+    R  shift, and go to state 15
+
+    $default  reduce using rule 3 (expr)
+
+
+state 20
+
+    2 expr: expr . P expr
+    3     | expr . S expr
+    4     | expr . M expr
+    5     | expr . R expr
+    6     | expr . D expr
+    6     | expr D expr .
+    9     | expr . C expr
+
+    C  shift, and go to state 14
+    R  shift, and go to state 15
+
+    $default  reduce using rule 6 (expr)
+
+
+state 21
+
+    2 expr: expr . P expr
+    3     | expr . S expr
+    4     | expr . M expr
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
+    9     | expr C expr .
+
+    R  shift, and go to state 15
+
+    C  error (nonassociative)
+
+    $default  reduce using rule 9 (expr)
+
+
+state 22
+
+    2 expr: expr . P expr
+    3     | expr . S expr
+    4     | expr . M expr
+    5     | expr . R expr
+    5     | expr R expr .
+    6     | expr . D expr
+    9     | expr . C expr
+
+    R  error (nonassociative)
+
+    $default  reduce using rule 5 (expr)
