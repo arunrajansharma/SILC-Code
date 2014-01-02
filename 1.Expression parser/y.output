@@ -4,32 +4,32 @@ Grammar
 
     1 program: expr END
 
-    2 expr: expr '+' expr
-    3     | expr '-' expr
-    4     | expr '*' expr
-    5     | expr '/' expr
-    6     | expr '%' expr
+    2 expr: expr P expr
+    3     | expr M expr
+    4     | expr S expr
+    5     | expr R expr
+    6     | expr D expr
     7     | '(' expr ')'
-    8     | '-' expr
-    9     | expr '^' expr
+    8     | M expr
+    9     | expr C expr
    10     | NUMBER
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'%' (37) 6
 '(' (40) 7
 ')' (41) 7
-'*' (42) 4
-'+' (43) 2
-'-' (45) 3 8
-'/' (47) 5
-'^' (94) 9
 error (256)
 NUMBER (258) 10
 END (259) 1
-UMINUS (260)
+P (260) 2
+M (261) 3 8
+S (262) 4
+D (263) 6
+C (264) 9
+R (265) 5
+UMINUS (266)
 
 
 Nonterminals, with rules where they appear
@@ -47,7 +47,7 @@ state 0
     0 $accept: . program $end
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     program  go to state 4
@@ -63,10 +63,10 @@ state 1
 
 state 2
 
-    8 expr: '-' . expr
+    8 expr: M . expr
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     expr  go to state 6
@@ -77,7 +77,7 @@ state 3
     7 expr: '(' . expr ')'
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     expr  go to state 7
@@ -93,51 +93,51 @@ state 4
 state 5
 
     1 program: expr . END
-    2 expr: expr . '+' expr
-    3     | expr . '-' expr
-    4     | expr . '*' expr
-    5     | expr . '/' expr
-    6     | expr . '%' expr
-    9     | expr . '^' expr
+    2 expr: expr . P expr
+    3     | expr . M expr
+    4     | expr . S expr
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
 
     END  shift, and go to state 9
-    '+'  shift, and go to state 10
-    '-'  shift, and go to state 11
-    '*'  shift, and go to state 12
-    '/'  shift, and go to state 13
-    '%'  shift, and go to state 14
-    '^'  shift, and go to state 15
+    P    shift, and go to state 10
+    M    shift, and go to state 11
+    S    shift, and go to state 12
+    D    shift, and go to state 13
+    C    shift, and go to state 14
+    R    shift, and go to state 15
 
 
 state 6
 
-    2 expr: expr . '+' expr
-    3     | expr . '-' expr
-    4     | expr . '*' expr
-    5     | expr . '/' expr
-    6     | expr . '%' expr
-    8     | '-' expr .
-    9     | expr . '^' expr
+    2 expr: expr . P expr
+    3     | expr . M expr
+    4     | expr . S expr
+    5     | expr . R expr
+    6     | expr . D expr
+    8     | M expr .
+    9     | expr . C expr
 
     $default  reduce using rule 8 (expr)
 
 
 state 7
 
-    2 expr: expr . '+' expr
-    3     | expr . '-' expr
-    4     | expr . '*' expr
-    5     | expr . '/' expr
-    6     | expr . '%' expr
+    2 expr: expr . P expr
+    3     | expr . M expr
+    4     | expr . S expr
+    5     | expr . R expr
+    6     | expr . D expr
     7     | '(' expr . ')'
-    9     | expr . '^' expr
+    9     | expr . C expr
 
-    '+'  shift, and go to state 10
-    '-'  shift, and go to state 11
-    '*'  shift, and go to state 12
-    '/'  shift, and go to state 13
-    '%'  shift, and go to state 14
-    '^'  shift, and go to state 15
+    P    shift, and go to state 10
+    M    shift, and go to state 11
+    S    shift, and go to state 12
+    D    shift, and go to state 13
+    C    shift, and go to state 14
+    R    shift, and go to state 15
     ')'  shift, and go to state 16
 
 
@@ -157,10 +157,10 @@ state 9
 
 state 10
 
-    2 expr: expr '+' . expr
+    2 expr: expr P . expr
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     expr  go to state 17
@@ -168,10 +168,10 @@ state 10
 
 state 11
 
-    3 expr: expr '-' . expr
+    3 expr: expr M . expr
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     expr  go to state 18
@@ -179,10 +179,10 @@ state 11
 
 state 12
 
-    4 expr: expr '*' . expr
+    4 expr: expr S . expr
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     expr  go to state 19
@@ -190,10 +190,10 @@ state 12
 
 state 13
 
-    5 expr: expr '/' . expr
+    6 expr: expr D . expr
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     expr  go to state 20
@@ -201,10 +201,10 @@ state 13
 
 state 14
 
-    6 expr: expr '%' . expr
+    9 expr: expr C . expr
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     expr  go to state 21
@@ -212,10 +212,10 @@ state 14
 
 state 15
 
-    9 expr: expr '^' . expr
+    5 expr: expr R . expr
 
     NUMBER  shift, and go to state 1
-    '-'     shift, and go to state 2
+    M       shift, and go to state 2
     '('     shift, and go to state 3
 
     expr  go to state 22
@@ -230,97 +230,99 @@ state 16
 
 state 17
 
-    2 expr: expr . '+' expr
-    2     | expr '+' expr .
-    3     | expr . '-' expr
-    4     | expr . '*' expr
-    5     | expr . '/' expr
-    6     | expr . '%' expr
-    9     | expr . '^' expr
+    2 expr: expr . P expr
+    2     | expr P expr .
+    3     | expr . M expr
+    4     | expr . S expr
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
 
-    '*'  shift, and go to state 12
-    '/'  shift, and go to state 13
-    '%'  shift, and go to state 14
-    '^'  shift, and go to state 15
+    S  shift, and go to state 12
+    D  shift, and go to state 13
+    C  shift, and go to state 14
+    R  shift, and go to state 15
 
     $default  reduce using rule 2 (expr)
 
 
 state 18
 
-    2 expr: expr . '+' expr
-    3     | expr . '-' expr
-    3     | expr '-' expr .
-    4     | expr . '*' expr
-    5     | expr . '/' expr
-    6     | expr . '%' expr
-    9     | expr . '^' expr
+    2 expr: expr . P expr
+    3     | expr . M expr
+    3     | expr M expr .
+    4     | expr . S expr
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
 
-    '*'  shift, and go to state 12
-    '/'  shift, and go to state 13
-    '%'  shift, and go to state 14
-    '^'  shift, and go to state 15
+    S  shift, and go to state 12
+    D  shift, and go to state 13
+    C  shift, and go to state 14
+    R  shift, and go to state 15
 
     $default  reduce using rule 3 (expr)
 
 
 state 19
 
-    2 expr: expr . '+' expr
-    3     | expr . '-' expr
-    4     | expr . '*' expr
-    4     | expr '*' expr .
-    5     | expr . '/' expr
-    6     | expr . '%' expr
-    9     | expr . '^' expr
+    2 expr: expr . P expr
+    3     | expr . M expr
+    4     | expr . S expr
+    4     | expr S expr .
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
 
-    '%'  shift, and go to state 14
-    '^'  shift, and go to state 15
+    C  shift, and go to state 14
+    R  shift, and go to state 15
 
     $default  reduce using rule 4 (expr)
 
 
 state 20
 
-    2 expr: expr . '+' expr
-    3     | expr . '-' expr
-    4     | expr . '*' expr
-    5     | expr . '/' expr
-    5     | expr '/' expr .
-    6     | expr . '%' expr
-    9     | expr . '^' expr
+    2 expr: expr . P expr
+    3     | expr . M expr
+    4     | expr . S expr
+    5     | expr . R expr
+    6     | expr . D expr
+    6     | expr D expr .
+    9     | expr . C expr
 
-    '%'  shift, and go to state 14
-    '^'  shift, and go to state 15
-
-    $default  reduce using rule 5 (expr)
-
-
-state 21
-
-    2 expr: expr . '+' expr
-    3     | expr . '-' expr
-    4     | expr . '*' expr
-    5     | expr . '/' expr
-    6     | expr . '%' expr
-    6     | expr '%' expr .
-    9     | expr . '^' expr
-
-    '^'  shift, and go to state 15
+    C  shift, and go to state 14
+    R  shift, and go to state 15
 
     $default  reduce using rule 6 (expr)
 
 
-state 22
+state 21
 
-    2 expr: expr . '+' expr
-    3     | expr . '-' expr
-    4     | expr . '*' expr
-    5     | expr . '/' expr
-    6     | expr . '%' expr
-    9     | expr . '^' expr
-    9     | expr '^' expr .
+    2 expr: expr . P expr
+    3     | expr . M expr
+    4     | expr . S expr
+    5     | expr . R expr
+    6     | expr . D expr
+    9     | expr . C expr
+    9     | expr C expr .
 
-    '^'  error (nonassociative)
+    R  shift, and go to state 15
+
+    C  error (nonassociative)
 
     $default  reduce using rule 9 (expr)
+
+
+state 22
+
+    2 expr: expr . P expr
+    3     | expr . M expr
+    4     | expr . S expr
+    5     | expr . R expr
+    5     | expr R expr .
+    6     | expr . D expr
+    9     | expr . C expr
+
+    R  error (nonassociative)
+
+    $default  reduce using rule 5 (expr)

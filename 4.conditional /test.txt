@@ -1,4 +1,25 @@
-arun=70;
-if(arun<90) then 
+start
+read(a);
+if(a<5) then 
 write(100);
- endif;
+else write(50);
+endif;
+
+read(z);
+if(z<5) then 
+write(400);
+else write(30);
+endif;
+
+read(b);
+while(b<5)
+do read(c);
+   read(a);
+b = b+1;
+endwhile;
+
+write(999);
+write(c);
+
+end
+

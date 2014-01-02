@@ -1,15 +1,10 @@
-Terminals unused in grammar
-
-   END
-
-
 Grammar
 
     0 $accept: start $end
 
     1 start: program
 
-    2 program: stmts
+    2 program: START stmts END
 
     3 stmts: stmts stmt
     4      | /* empty */
@@ -19,662 +14,756 @@ Grammar
     7     | WRITE '(' expr ')' ';'
     8     | IF '(' lexpr ')' THEN stmts ENDIF ';'
     9     | IF '(' lexpr ')' THEN stmts ELSE stmts ENDIF ';'
+   10     | WHILE '(' lexpr ')' DO stmts ENDWHILE ';'
 
-   10 lexpr: expr RELOP expr
+   11 lexpr: expr RELOP expr
 
-   11 expr: expr P expr
-   12     | expr M expr
-   13     | expr S expr
-   14     | expr R expr
-   15     | expr D expr
-   16     | '(' expr ')'
-   17     | M expr
-   18     | expr C expr
-   19     | NUMBER
-   20     | ID
+   12 expr: expr P expr
+   13     | expr M expr
+   14     | expr S expr
+   15     | expr R expr
+   16     | expr D expr
+   17     | '(' expr ')'
+   18     | M expr
+   19     | expr C expr
+   20     | NUMBER
+   21     | ID
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 6 7 8 9 16
-')' (41) 6 7 8 9 16
-';' (59) 5 6 7 8 9
+'(' (40) 6 7 8 9 10 17
+')' (41) 6 7 8 9 10 17
+';' (59) 5 6 7 8 9 10
 error (256)
-NUMBER (258) 19
-END (259)
-P (260) 11
-M (261) 12 17
-S (262) 13
-D (263) 15
-C (264) 18
-R (265) 14
-READ (266) 6
-WRITE (267) 7
-ASSIGN_OP (268) 5
-ID (269) 5 6 20
-RELOP (270) 10
-IF (271) 8 9
-THEN (272) 8 9
-ENDIF (273) 8 9
-ELSE (274) 9
-UMINUS (275)
+NUMBER (258) 20
+END (259) 2
+START (260) 2
+P (261) 12
+M (262) 13 18
+S (263) 14
+D (264) 16
+C (265) 19
+R (266) 15
+READ (267) 6
+WRITE (268) 7
+ASSIGN_OP (269) 5
+ID (270) 5 6 21
+RELOP (271) 11
+WHILE (272) 10
+DO (273) 10
+ENDWHILE (274) 10
+IF (275) 8 9
+THEN (276) 8 9
+ENDIF (277) 8 9
+ELSE (278) 9
+UMINUS (279)
 
 
 Nonterminals, with rules where they appear
 
-$accept (24)
+$accept (28)
     on left: 0
-start (25)
+start (29)
     on left: 1, on right: 0
-program (26)
+program (30)
     on left: 2, on right: 1
-stmts (27)
-    on left: 3 4, on right: 2 3 8 9
-stmt (28)
-    on left: 5 6 7 8 9, on right: 3
-lexpr (29)
-    on left: 10, on right: 8 9
-expr (30)
-    on left: 11 12 13 14 15 16 17 18 19 20, on right: 5 7 10 11 12
-    13 14 15 16 17 18
+stmts (31)
+    on left: 3 4, on right: 2 3 8 9 10
+stmt (32)
+    on left: 5 6 7 8 9 10, on right: 3
+lexpr (33)
+    on left: 11, on right: 8 9 10
+expr (34)
+    on left: 12 13 14 15 16 17 18 19 20 21, on right: 5 7 11 12 13
+    14 15 16 17 18 19
 
 
 state 0
 
     0 $accept: . start $end
 
-    $default  reduce using rule 4 (stmts)
+    START  shift, and go to state 1
 
-    start    go to state 1
-    program  go to state 2
-    stmts    go to state 3
+    start    go to state 2
+    program  go to state 3
 
 
 state 1
 
-    0 $accept: start . $end
+    2 program: START . stmts END
 
-    $end  shift, and go to state 4
+    $default  reduce using rule 4 (stmts)
+
+    stmts  go to state 4
 
 
 state 2
+
+    0 $accept: start . $end
+
+    $end  shift, and go to state 5
+
+
+state 3
 
     1 start: program .
 
     $default  reduce using rule 1 (start)
 
 
-state 3
+state 4
 
-    2 program: stmts .
+    2 program: START stmts . END
     3 stmts: stmts . stmt
 
-    READ   shift, and go to state 5
-    WRITE  shift, and go to state 6
-    ID     shift, and go to state 7
-    IF     shift, and go to state 8
+    END    shift, and go to state 6
+    READ   shift, and go to state 7
+    WRITE  shift, and go to state 8
+    ID     shift, and go to state 9
+    WHILE  shift, and go to state 10
+    IF     shift, and go to state 11
 
-    $default  reduce using rule 2 (program)
-
-    stmt  go to state 9
+    stmt  go to state 12
 
 
-state 4
+state 5
 
     0 $accept: start $end .
 
     $default  accept
 
 
-state 5
-
-    6 stmt: READ . '(' ID ')' ';'
-
-    '('  shift, and go to state 10
-
-
 state 6
 
-    7 stmt: WRITE . '(' expr ')' ';'
+    2 program: START stmts END .
 
-    '('  shift, and go to state 11
+    $default  reduce using rule 2 (program)
 
 
 state 7
 
-    5 stmt: ID . ASSIGN_OP expr ';'
-
-    ASSIGN_OP  shift, and go to state 12
-
-
-state 8
-
-    8 stmt: IF . '(' lexpr ')' THEN stmts ENDIF ';'
-    9     | IF . '(' lexpr ')' THEN stmts ELSE stmts ENDIF ';'
+    6 stmt: READ . '(' ID ')' ';'
 
     '('  shift, and go to state 13
 
 
+state 8
+
+    7 stmt: WRITE . '(' expr ')' ';'
+
+    '('  shift, and go to state 14
+
+
 state 9
+
+    5 stmt: ID . ASSIGN_OP expr ';'
+
+    ASSIGN_OP  shift, and go to state 15
+
+
+state 10
+
+   10 stmt: WHILE . '(' lexpr ')' DO stmts ENDWHILE ';'
+
+    '('  shift, and go to state 16
+
+
+state 11
+
+    8 stmt: IF . '(' lexpr ')' THEN stmts ENDIF ';'
+    9     | IF . '(' lexpr ')' THEN stmts ELSE stmts ENDIF ';'
+
+    '('  shift, and go to state 17
+
+
+state 12
 
     3 stmts: stmts stmt .
 
     $default  reduce using rule 3 (stmts)
 
 
-state 10
+state 13
 
     6 stmt: READ '(' . ID ')' ';'
 
-    ID  shift, and go to state 14
-
-
-state 11
-
-    7 stmt: WRITE '(' . expr ')' ';'
-
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 19
-
-
-state 12
-
-    5 stmt: ID ASSIGN_OP . expr ';'
-
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 20
-
-
-state 13
-
-    8 stmt: IF '(' . lexpr ')' THEN stmts ENDIF ';'
-    9     | IF '(' . lexpr ')' THEN stmts ELSE stmts ENDIF ';'
-
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    lexpr  go to state 21
-    expr   go to state 22
+    ID  shift, and go to state 18
 
 
 state 14
 
-    6 stmt: READ '(' ID . ')' ';'
+    7 stmt: WRITE '(' . expr ')' ';'
 
-    ')'  shift, and go to state 23
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 23
 
 
 state 15
 
-   19 expr: NUMBER .
+    5 stmt: ID ASSIGN_OP . expr ';'
 
-    $default  reduce using rule 19 (expr)
-
-
-state 16
-
-   17 expr: M . expr
-
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
 
     expr  go to state 24
 
 
+state 16
+
+   10 stmt: WHILE '(' . lexpr ')' DO stmts ENDWHILE ';'
+
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    lexpr  go to state 25
+    expr   go to state 26
+
+
 state 17
 
-   20 expr: ID .
+    8 stmt: IF '(' . lexpr ')' THEN stmts ENDIF ';'
+    9     | IF '(' . lexpr ')' THEN stmts ELSE stmts ENDIF ';'
 
-    $default  reduce using rule 20 (expr)
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    lexpr  go to state 27
+    expr   go to state 26
 
 
 state 18
 
-   16 expr: '(' . expr ')'
+    6 stmt: READ '(' ID . ')' ';'
 
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 25
+    ')'  shift, and go to state 28
 
 
 state 19
 
-    7 stmt: WRITE '(' expr . ')' ';'
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   18     | expr . C expr
+   20 expr: NUMBER .
 
-    P    shift, and go to state 26
-    M    shift, and go to state 27
-    S    shift, and go to state 28
-    D    shift, and go to state 29
-    C    shift, and go to state 30
-    R    shift, and go to state 31
-    ')'  shift, and go to state 32
+    $default  reduce using rule 20 (expr)
 
 
 state 20
 
-    5 stmt: ID ASSIGN_OP expr . ';'
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   18     | expr . C expr
+   18 expr: M . expr
 
-    P    shift, and go to state 26
-    M    shift, and go to state 27
-    S    shift, and go to state 28
-    D    shift, and go to state 29
-    C    shift, and go to state 30
-    R    shift, and go to state 31
-    ';'  shift, and go to state 33
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 29
 
 
 state 21
 
-    8 stmt: IF '(' lexpr . ')' THEN stmts ENDIF ';'
-    9     | IF '(' lexpr . ')' THEN stmts ELSE stmts ENDIF ';'
+   21 expr: ID .
 
-    ')'  shift, and go to state 34
+    $default  reduce using rule 21 (expr)
 
 
 state 22
 
-   10 lexpr: expr . RELOP expr
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   18     | expr . C expr
+   17 expr: '(' . expr ')'
 
-    P      shift, and go to state 26
-    M      shift, and go to state 27
-    S      shift, and go to state 28
-    D      shift, and go to state 29
-    C      shift, and go to state 30
-    R      shift, and go to state 31
-    RELOP  shift, and go to state 35
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 30
 
 
 state 23
 
-    6 stmt: READ '(' ID ')' . ';'
+    7 stmt: WRITE '(' expr . ')' ';'
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   19     | expr . C expr
 
-    ';'  shift, and go to state 36
+    P    shift, and go to state 31
+    M    shift, and go to state 32
+    S    shift, and go to state 33
+    D    shift, and go to state 34
+    C    shift, and go to state 35
+    R    shift, and go to state 36
+    ')'  shift, and go to state 37
 
 
 state 24
 
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   17     | M expr .
-   18     | expr . C expr
+    5 stmt: ID ASSIGN_OP expr . ';'
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   19     | expr . C expr
 
-    $default  reduce using rule 17 (expr)
+    P    shift, and go to state 31
+    M    shift, and go to state 32
+    S    shift, and go to state 33
+    D    shift, and go to state 34
+    C    shift, and go to state 35
+    R    shift, and go to state 36
+    ';'  shift, and go to state 38
 
 
 state 25
 
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   16     | '(' expr . ')'
-   18     | expr . C expr
+   10 stmt: WHILE '(' lexpr . ')' DO stmts ENDWHILE ';'
 
-    P    shift, and go to state 26
-    M    shift, and go to state 27
-    S    shift, and go to state 28
-    D    shift, and go to state 29
-    C    shift, and go to state 30
-    R    shift, and go to state 31
-    ')'  shift, and go to state 37
+    ')'  shift, and go to state 39
 
 
 state 26
 
-   11 expr: expr P . expr
+   11 lexpr: expr . RELOP expr
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   19     | expr . C expr
 
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 38
+    P      shift, and go to state 31
+    M      shift, and go to state 32
+    S      shift, and go to state 33
+    D      shift, and go to state 34
+    C      shift, and go to state 35
+    R      shift, and go to state 36
+    RELOP  shift, and go to state 40
 
 
 state 27
 
-   12 expr: expr M . expr
+    8 stmt: IF '(' lexpr . ')' THEN stmts ENDIF ';'
+    9     | IF '(' lexpr . ')' THEN stmts ELSE stmts ENDIF ';'
 
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 39
+    ')'  shift, and go to state 41
 
 
 state 28
 
-   13 expr: expr S . expr
+    6 stmt: READ '(' ID ')' . ';'
 
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 40
+    ';'  shift, and go to state 42
 
 
 state 29
 
-   15 expr: expr D . expr
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   18     | M expr .
+   19     | expr . C expr
 
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 41
+    $default  reduce using rule 18 (expr)
 
 
 state 30
 
-   18 expr: expr C . expr
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   17     | '(' expr . ')'
+   19     | expr . C expr
 
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 42
+    P    shift, and go to state 31
+    M    shift, and go to state 32
+    S    shift, and go to state 33
+    D    shift, and go to state 34
+    C    shift, and go to state 35
+    R    shift, and go to state 36
+    ')'  shift, and go to state 43
 
 
 state 31
 
-   14 expr: expr R . expr
+   12 expr: expr P . expr
 
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
 
-    expr  go to state 43
+    expr  go to state 44
 
 
 state 32
 
-    7 stmt: WRITE '(' expr ')' . ';'
+   13 expr: expr M . expr
 
-    ';'  shift, and go to state 44
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 45
 
 
 state 33
+
+   14 expr: expr S . expr
+
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 46
+
+
+state 34
+
+   16 expr: expr D . expr
+
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 47
+
+
+state 35
+
+   19 expr: expr C . expr
+
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 48
+
+
+state 36
+
+   15 expr: expr R . expr
+
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 49
+
+
+state 37
+
+    7 stmt: WRITE '(' expr ')' . ';'
+
+    ';'  shift, and go to state 50
+
+
+state 38
 
     5 stmt: ID ASSIGN_OP expr ';' .
 
     $default  reduce using rule 5 (stmt)
 
 
-state 34
+state 39
+
+   10 stmt: WHILE '(' lexpr ')' . DO stmts ENDWHILE ';'
+
+    DO  shift, and go to state 51
+
+
+state 40
+
+   11 lexpr: expr RELOP . expr
+
+    NUMBER  shift, and go to state 19
+    M       shift, and go to state 20
+    ID      shift, and go to state 21
+    '('     shift, and go to state 22
+
+    expr  go to state 52
+
+
+state 41
 
     8 stmt: IF '(' lexpr ')' . THEN stmts ENDIF ';'
     9     | IF '(' lexpr ')' . THEN stmts ELSE stmts ENDIF ';'
 
-    THEN  shift, and go to state 45
+    THEN  shift, and go to state 53
 
 
-state 35
-
-   10 lexpr: expr RELOP . expr
-
-    NUMBER  shift, and go to state 15
-    M       shift, and go to state 16
-    ID      shift, and go to state 17
-    '('     shift, and go to state 18
-
-    expr  go to state 46
-
-
-state 36
+state 42
 
     6 stmt: READ '(' ID ')' ';' .
 
     $default  reduce using rule 6 (stmt)
 
 
-state 37
+state 43
 
-   16 expr: '(' expr ')' .
+   17 expr: '(' expr ')' .
 
-    $default  reduce using rule 16 (expr)
-
-
-state 38
-
-   11 expr: expr . P expr
-   11     | expr P expr .
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   18     | expr . C expr
-
-    S  shift, and go to state 28
-    D  shift, and go to state 29
-    C  shift, and go to state 30
-    R  shift, and go to state 31
-
-    $default  reduce using rule 11 (expr)
+    $default  reduce using rule 17 (expr)
 
 
-state 39
+state 44
 
-   11 expr: expr . P expr
-   12     | expr . M expr
-   12     | expr M expr .
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   18     | expr . C expr
+   12 expr: expr . P expr
+   12     | expr P expr .
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   19     | expr . C expr
 
-    S  shift, and go to state 28
-    D  shift, and go to state 29
-    C  shift, and go to state 30
-    R  shift, and go to state 31
+    S  shift, and go to state 33
+    D  shift, and go to state 34
+    C  shift, and go to state 35
+    R  shift, and go to state 36
 
     $default  reduce using rule 12 (expr)
 
 
-state 40
+state 45
 
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   13     | expr S expr .
-   14     | expr . R expr
-   15     | expr . D expr
-   18     | expr . C expr
+   12 expr: expr . P expr
+   13     | expr . M expr
+   13     | expr M expr .
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   19     | expr . C expr
 
-    C  shift, and go to state 30
-    R  shift, and go to state 31
+    S  shift, and go to state 33
+    D  shift, and go to state 34
+    C  shift, and go to state 35
+    R  shift, and go to state 36
 
     $default  reduce using rule 13 (expr)
 
 
-state 41
+state 46
 
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   15     | expr D expr .
-   18     | expr . C expr
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   14     | expr S expr .
+   15     | expr . R expr
+   16     | expr . D expr
+   19     | expr . C expr
 
-    C  shift, and go to state 30
-    R  shift, and go to state 31
-
-    $default  reduce using rule 15 (expr)
-
-
-state 42
-
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   18     | expr . C expr
-   18     | expr C expr .
-
-    R  shift, and go to state 31
-
-    C  error (nonassociative)
-
-    $default  reduce using rule 18 (expr)
-
-
-state 43
-
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   14     | expr R expr .
-   15     | expr . D expr
-   18     | expr . C expr
-
-    R  error (nonassociative)
+    C  shift, and go to state 35
+    R  shift, and go to state 36
 
     $default  reduce using rule 14 (expr)
 
 
-state 44
+state 47
+
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   16     | expr D expr .
+   19     | expr . C expr
+
+    C  shift, and go to state 35
+    R  shift, and go to state 36
+
+    $default  reduce using rule 16 (expr)
+
+
+state 48
+
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   19     | expr . C expr
+   19     | expr C expr .
+
+    R  shift, and go to state 36
+
+    C  error (nonassociative)
+
+    $default  reduce using rule 19 (expr)
+
+
+state 49
+
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   15     | expr R expr .
+   16     | expr . D expr
+   19     | expr . C expr
+
+    R  error (nonassociative)
+
+    $default  reduce using rule 15 (expr)
+
+
+state 50
 
     7 stmt: WRITE '(' expr ')' ';' .
 
     $default  reduce using rule 7 (stmt)
 
 
-state 45
+state 51
+
+   10 stmt: WHILE '(' lexpr ')' DO . stmts ENDWHILE ';'
+
+    $default  reduce using rule 4 (stmts)
+
+    stmts  go to state 54
+
+
+state 52
+
+   11 lexpr: expr RELOP expr .
+   12 expr: expr . P expr
+   13     | expr . M expr
+   14     | expr . S expr
+   15     | expr . R expr
+   16     | expr . D expr
+   19     | expr . C expr
+
+    P  shift, and go to state 31
+    M  shift, and go to state 32
+    S  shift, and go to state 33
+    D  shift, and go to state 34
+    C  shift, and go to state 35
+    R  shift, and go to state 36
+
+    $default  reduce using rule 11 (lexpr)
+
+
+state 53
 
     8 stmt: IF '(' lexpr ')' THEN . stmts ENDIF ';'
     9     | IF '(' lexpr ')' THEN . stmts ELSE stmts ENDIF ';'
 
     $default  reduce using rule 4 (stmts)
 
-    stmts  go to state 47
+    stmts  go to state 55
 
 
-state 46
+state 54
 
-   10 lexpr: expr RELOP expr .
-   11 expr: expr . P expr
-   12     | expr . M expr
-   13     | expr . S expr
-   14     | expr . R expr
-   15     | expr . D expr
-   18     | expr . C expr
+    3 stmts: stmts . stmt
+   10 stmt: WHILE '(' lexpr ')' DO stmts . ENDWHILE ';'
 
-    P  shift, and go to state 26
-    M  shift, and go to state 27
-    S  shift, and go to state 28
-    D  shift, and go to state 29
-    C  shift, and go to state 30
-    R  shift, and go to state 31
+    READ      shift, and go to state 7
+    WRITE     shift, and go to state 8
+    ID        shift, and go to state 9
+    WHILE     shift, and go to state 10
+    ENDWHILE  shift, and go to state 56
+    IF        shift, and go to state 11
 
-    $default  reduce using rule 10 (lexpr)
+    stmt  go to state 12
 
 
-state 47
+state 55
 
     3 stmts: stmts . stmt
     8 stmt: IF '(' lexpr ')' THEN stmts . ENDIF ';'
     9     | IF '(' lexpr ')' THEN stmts . ELSE stmts ENDIF ';'
 
-    READ   shift, and go to state 5
-    WRITE  shift, and go to state 6
-    ID     shift, and go to state 7
-    IF     shift, and go to state 8
-    ENDIF  shift, and go to state 48
-    ELSE   shift, and go to state 49
+    READ   shift, and go to state 7
+    WRITE  shift, and go to state 8
+    ID     shift, and go to state 9
+    WHILE  shift, and go to state 10
+    IF     shift, and go to state 11
+    ENDIF  shift, and go to state 57
+    ELSE   shift, and go to state 58
 
-    stmt  go to state 9
+    stmt  go to state 12
 
 
-state 48
+state 56
+
+   10 stmt: WHILE '(' lexpr ')' DO stmts ENDWHILE . ';'
+
+    ';'  shift, and go to state 59
+
+
+state 57
 
     8 stmt: IF '(' lexpr ')' THEN stmts ENDIF . ';'
 
-    ';'  shift, and go to state 50
+    ';'  shift, and go to state 60
 
 
-state 49
+state 58
 
     9 stmt: IF '(' lexpr ')' THEN stmts ELSE . stmts ENDIF ';'
 
     $default  reduce using rule 4 (stmts)
 
-    stmts  go to state 51
+    stmts  go to state 61
 
 
-state 50
+state 59
+
+   10 stmt: WHILE '(' lexpr ')' DO stmts ENDWHILE ';' .
+
+    $default  reduce using rule 10 (stmt)
+
+
+state 60
 
     8 stmt: IF '(' lexpr ')' THEN stmts ENDIF ';' .
 
     $default  reduce using rule 8 (stmt)
 
 
-state 51
+state 61
 
     3 stmts: stmts . stmt
     9 stmt: IF '(' lexpr ')' THEN stmts ELSE stmts . ENDIF ';'
 
-    READ   shift, and go to state 5
-    WRITE  shift, and go to state 6
-    ID     shift, and go to state 7
-    IF     shift, and go to state 8
-    ENDIF  shift, and go to state 52
+    READ   shift, and go to state 7
+    WRITE  shift, and go to state 8
+    ID     shift, and go to state 9
+    WHILE  shift, and go to state 10
+    IF     shift, and go to state 11
+    ENDIF  shift, and go to state 62
 
-    stmt  go to state 9
+    stmt  go to state 12
 
 
-state 52
+state 62
 
     9 stmt: IF '(' lexpr ')' THEN stmts ELSE stmts ENDIF . ';'
 
-    ';'  shift, and go to state 53
+    ';'  shift, and go to state 63
 
 
-state 53
+state 63
 
     9 stmt: IF '(' lexpr ')' THEN stmts ELSE stmts ENDIF ';' .
 

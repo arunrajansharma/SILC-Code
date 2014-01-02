@@ -16,7 +16,7 @@
 	#define ASSIGN 101
         #define MOD 102	
         #define VOID 103
-	//#define LT 104
+	#define LT 104
 	#define GT 105
 	#define EQ 106 
         #define READ_NODE 145
@@ -30,6 +30,8 @@ alpha   [a-z]+
 	
 
 %%
+"start"     { return START ;}
+"end"       {return  END ;}
 "if"        { return IF ;}
 "endif"     { return ENDIF ; }
 "then"      { return THEN ;}
@@ -37,6 +39,7 @@ alpha   [a-z]+
 "while"     { return WHILE ;}
 "do"        { return DO ;}
 "endwhile"  { return ENDWHILE ;}
+
 
 [ \t\n]+		{
       			}

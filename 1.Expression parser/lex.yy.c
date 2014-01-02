@@ -463,7 +463,7 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "cg_calc.l"
 #line 2 "cg_calc.l"
-/*LEX program for parsing expressions and generating code.*/	
+/* LEX program for building a lexical analyzer for expressions */	
 
 	#include "y.tab.h"
 	#include<stdlib.h>

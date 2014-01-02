@@ -30,10 +30,16 @@ alpha   [a-z]+
 	
 
 %%
+"start"      return START ;
+"end"        return END  ;
 "if"        { return IF ;}
 "endif"     { return ENDIF ; }
 "then"      { return THEN ;}
 "else"      { return ELSE ;}
+"while"      {return WHILE;}
+"endwhile"    {return ENDWHILE;}
+
+"do"           {return DO;}
 
 [ \t\n]+		{
       			}

@@ -14,6 +14,7 @@
 #define VOID 103
 #define IF_THEN 107
 #define IF_THEN_ELSE 108
+#define WHILE_LOOP 109
 #define T 1
 #define F 0
 
@@ -23,7 +24,7 @@
 
 /*Global file pointer */
 FILE *fp;
-int final_answer;
+
 /*Data structure of a binary tree (which will be used to implement the expression syntax tree)*/
 struct node
 {
@@ -44,7 +45,7 @@ struct symbol_table
   struct symbol_table *next;
 } *root = NULL;
 
-int off_set = 0;
+int off_set = 0;                          // this off_set will be used in implementing symbol table 
 
 /*Function for looking up in symbol table  */
 struct symbol_table * Lookup(char* name); 
@@ -65,18 +66,13 @@ struct node* makenode(struct node *parent,struct node *P1, struct node*P2,struct
 /*To recursively descend the tree and calculate the value of the expression*/
 int calculate(struct node *t);
  
-int ifcount = 0;
+int ifcount = 0;            // to print labels for IF statements  for example 'I0' will indicate that IF statement has been used    						for 1 time
 
-struct istack
+struct istack                    //stack data structure for mainting the correct labelling
 {
  int value;
  struct istack *next;
 }*itop;
-
-struct wstack{
- int value;
- struct wstack *next;
-}*wtop;
 
 
 void ipush(int count)
@@ -95,6 +91,13 @@ int ipop()
   free(temp);
   return res; 
 }
+
+int whilecount = 0;     // to print labels for WHILE statements  for example 'w0' will indicate that WhILE statement has been 					used for 1 time.
+
+struct wstack{
+ int value;
+ struct wstack *next;
+}*wtop;
 
 void wpush(int count)
 {
@@ -124,8 +127,8 @@ int wpop()
 };
 
 %token <ptr> NUMBER
-%token END   
-%token <ptr> P M S D C R READ WRITE ASSIGN_OP ID RELOP
+%token END   START
+%token <ptr> P M S D C R READ WRITE ASSIGN_OP ID RELOP WHILE  DO ENDWHILE
 %token IF THEN ENDIF ELSE
 %left P M
 %left S D
@@ -142,14 +145,14 @@ start : program				    {
 			   			fprintf(fp,"START");
 						fprintf(fp,"\nMOV SP,0");
 						fprintf(fp,"\nMOV BP,0");
-                                              final_answer= calculate($1);
+                                                calculate($1);
 						fprintf(fp,"\nHALT");                                                          
 						fclose(fp);
 						exit(1);
 					   	}
 	;
 
-program : stmts                                 {	$$=$1; }
+program : START stmts  END                               {	$$=$2; }
         ;
 
 stmts 	: stmts stmt				{  
@@ -178,6 +181,11 @@ stmt  	: ID ASSIGN_OP expr ';'                {        install($1);
         |IF '('lexpr')' THEN stmts ELSE stmts ENDIF ';'  {   struct node * t1 = malloc(sizeof(struct node));
 	                                                     t1->node_type = IF_THEN;
  						             $$=makenode(t1,$3,$6,$8); }
+
+   
+        |WHILE '('lexpr')' DO stmts ENDWHILE ';'          {   struct node * t1 = malloc(sizeof(struct node));
+	                                                     t1->node_type = WHILE_LOOP;
+ 						             $$=makenode(t1,$3,$6,NULL); }
       	; 
 
 lexpr   : expr RELOP expr  {$$=makenode($2,$1,$3,NULL); }
@@ -228,22 +236,9 @@ int use_reg(int regno)				/* Uses the regno'th lower numbered register of the av
 {
 	return regcount-regno+1;		/* Example: Conceptually, use_reg(2) will return R0 if R0 and R1 were reserved i.e. 						         res_reg(2)*/
 }
-/*
-void res_label(int no_label)	
-{
-	label=label+no_label;					
-}
+		
 
-void free_label(int no_label)
-{
-	label=label-no_label;					
-}
 
-int use_label(int no_label)
-{
-	return label-no_label+1;					
-}
-*/
 void install(struct node * NODE)
 { 
   struct symbol_table * temp = malloc(sizeof(struct symbol_table));
@@ -360,23 +355,46 @@ int calculate(struct node *t)
                            fprintf(fp,"\nI%d:", ifcount);
 			   ipush(ifcount);
 			   ifcount++;   
-                        
-                            calculate(t->P1);
-                             res_reg(1);
+                           free_reg(1);
+
+                           calculate(t->P1);
+                            
+                           res_reg(1);
                            fprintf(fp,"\nJZ R%d,E%d", use_reg(1),ifcount-1);
-			     
-                             calculate(t->P2);
-                             fprintf(fp,"\nJMP EI%d", itop->value);
+			   free_reg(1);
+                           
+                           calculate(t->P2);
+                           
+                           fprintf(fp,"\nJMP EI%d", itop->value);
 			   fprintf(fp,"\nE%d:", itop->value);
-                          calculate(t->P3);
-                          fprintf(fp,"\nEI%d:", ipop());
+                           calculate(t->P3);
+                           fprintf(fp,"\nEI%d:", ipop());
                             
                                                   
 	        }
+                else if (t->node_type == WHILE_LOOP)
+                {          fprintf(fp,"\nW%d:", whilecount);
+			   wpush(whilecount);
+			   whilecount++;
+                           free_reg(1);
+
+                          calculate(t->P1);
+
+                          res_reg(1);
+                          fprintf(fp,"\nJZ R%d,EW%d", use_reg(1),whilecount-1);
+                          free_reg(2);
+ 
+                          calculate(t->P2);
+                          fprintf(fp,"\nJMP W%d", wtop->value);
+			  fprintf(fp,"\nEW%d:", wpop());
+
+                }
+
            	else if(t->node_type == WRITE_NODE)
                 {  	
 			calculate(t->P1);
                     	fprintf(fp,"\nOUT R%d",use_reg(1));
+                        free_reg(1);
                 }
            	else if(t->node_type == READ_NODE)
                 {    
@@ -395,12 +413,13 @@ int calculate(struct node *t)
                
              else if (t->node_type == LT)
                 {    
-                      res_reg(2);
-                     
+                      
+                       res_reg(2);
                       if(calculate(t->P1) < calculate(t->P2))
   			   result = T;
   			else  
   			   result =  F;
+                       
                       fprintf(fp,"\nLT  R%d,R%d",use_reg(2),use_reg(1));
                                           
                       free_reg(2);
@@ -409,13 +428,13 @@ int calculate(struct node *t)
                 } 
                else if (t->node_type == GT)
                 {     res_reg(2);
-                    //  res_label(1);
+                    
                        if(calculate(t->P1) > calculate(t->P2))
   			   result = T;
   			else  
   			   result =  F;
                       fprintf(fp,"\nGT  R%d,R%d",use_reg(2),use_reg(1));
-                     // fprintf(fp,"\nJZ  R%d, L%d",use_reg(2),use_label(1));
+                     
                    
                       free_reg(2);
                       
@@ -424,14 +443,14 @@ int calculate(struct node *t)
 
               else if (t->node_type == EQ)
                 {     res_reg(2);
-                     // res_label(1);
+                     
                     if(calculate(t->P1) < calculate(t->P2))
   			   result = T;
   			else  
   			   result =  F;
                      
                       fprintf(fp,"\nEQ  R%d,R%d",use_reg(2),use_reg(1));
-                     // fprintf(fp,"\nJZ  R%d, L%d",use_reg(2),use_label(1));
+                     
                   
                      
                       free_reg(2);
@@ -455,7 +474,7 @@ int yywrap(void)
 }
 	
 int main()
-{       printf("%d",final_answer);
+{       
 	yyparse();
 	return 0;
 }

@@ -64,7 +64,7 @@ int power(int a,int b);
 };
 
 %token <ptr> NUMBER
-%token END   
+%token END  START
 %token <ptr> P M S D C R READ WRITE ASSIGN_OP ID  RELOP
 %token IF THEN ENDIF ELSE WHILE DO ENDWHILE
 
@@ -85,7 +85,7 @@ start : program				    	{
 					   	}
 	;
 
-program : stmts                                 {	$$=$1; }
+program : START stmts END                                {	$$=$2; }
         ;
 
 stmts 	: stmts stmt				{  
@@ -231,12 +231,13 @@ int calculate(struct node *t)
                 } 
                 
            	else if(t->node_type == READ_NODE)
-                {       
-                        int mptr = variable_binding(t->P1->id);
+                {      
+                      
+		         int mptr = variable_binding(t->P1->id);
                          fflush(stdin);
                 
-
-                      scanf("%d",&my_array[mptr]);
+			
+                     scanf("%d",&my_array[mptr]);
                 }
  
                   else if (t->node_type == IF_THEN)

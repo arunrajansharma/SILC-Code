@@ -71,14 +71,14 @@ int power(int a,int b);
 %start start
 %%
 
-start : program				    	{		
+start : program	       		    	{		
 			                               calculate($1);
 							                                              
 							exit(1);
 					   	}
 	;
 
-program : stmts                                 {	$$=$1; }
+program : stmts  END                              {	$$=$1; }
         ;
 
 stmts 	: stmts stmt				{  
@@ -210,12 +210,13 @@ int calculate(struct node *t)
                 } 
                 
            	else if(t->node_type == READ_NODE)
-                {       
+                {         
                         int mptr = variable_binding(t->P1->id);
                          fflush(stdin);
                 
 
                       scanf("%d",&my_array[mptr]);
+			
                 } 
                
           return result;

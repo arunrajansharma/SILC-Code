@@ -1,4 +1,3 @@
-x=4+2;
-y=x;
-read(c);
-write(y);
+x = 4;
+read(z);
+write(y+x);

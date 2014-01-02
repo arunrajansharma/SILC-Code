@@ -30,8 +30,11 @@ alpha   [a-z]
 
 %%
 
-[ \t\n]+		{
-      			}
+ 
+[ \t\n]+       {} 
+
+"end"        {return END; }
+      			
 "+"		{
 			yylval.ptr = malloc(sizeof(struct node));			
 			yylval.ptr->node_type = PLUS;			

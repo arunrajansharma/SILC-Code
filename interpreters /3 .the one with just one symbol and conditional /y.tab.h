@@ -39,49 +39,51 @@
    enum yytokentype {
      NUMBER = 258,
      END = 259,
-     P = 260,
-     M = 261,
-     S = 262,
-     D = 263,
-     C = 264,
-     R = 265,
-     READ = 266,
-     WRITE = 267,
-     ASSIGN_OP = 268,
-     ID = 269,
-     RELOP = 270,
-     IF = 271,
-     THEN = 272,
-     ENDIF = 273,
-     ELSE = 274,
-     WHILE = 275,
-     DO = 276,
-     ENDWHILE = 277,
-     UMINUS = 278
+     START = 260,
+     P = 261,
+     M = 262,
+     S = 263,
+     D = 264,
+     C = 265,
+     R = 266,
+     READ = 267,
+     WRITE = 268,
+     ASSIGN_OP = 269,
+     ID = 270,
+     RELOP = 271,
+     IF = 272,
+     THEN = 273,
+     ENDIF = 274,
+     ELSE = 275,
+     WHILE = 276,
+     DO = 277,
+     ENDWHILE = 278,
+     UMINUS = 279
    };
 #endif
 /* Tokens.  */
 #define NUMBER 258
 #define END 259
-#define P 260
-#define M 261
-#define S 262
-#define D 263
-#define C 264
-#define R 265
-#define READ 266
-#define WRITE 267
-#define ASSIGN_OP 268
-#define ID 269
-#define RELOP 270
-#define IF 271
-#define THEN 272
-#define ENDIF 273
-#define ELSE 274
-#define WHILE 275
-#define DO 276
-#define ENDWHILE 277
-#define UMINUS 278
+#define START 260
+#define P 261
+#define M 262
+#define S 263
+#define D 264
+#define C 265
+#define R 266
+#define READ 267
+#define WRITE 268
+#define ASSIGN_OP 269
+#define ID 270
+#define RELOP 271
+#define IF 272
+#define THEN 273
+#define ENDIF 274
+#define ELSE 275
+#define WHILE 276
+#define DO 277
+#define ENDWHILE 278
+#define UMINUS 279
 
 
 
@@ -99,7 +101,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 103 "y.tab.h"
+#line 105 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
