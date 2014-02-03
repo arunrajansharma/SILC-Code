@@ -1,0 +1,10 @@
+decl
+integer x;
+boolean y;
+enddecl
+start
+read(x);
+x = x+2;
+write(y);
+end
+

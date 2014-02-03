@@ -1,0 +1,1185 @@
+Grammar
+
+    0 $accept: start $end
+
+    1 start: Declblock Mainblock
+
+    2 Declblock: DECL Declist ENDDECL
+
+    3 Declist: decl
+    4        | Declist decl
+
+    5 decl: Type Idlist ';'
+
+    6 Idlist: Idlist ',' Ids
+    7       | Ids
+
+    8 Ids: ID
+    9    | ID '[' NUMBER ']'
+
+   10 Type: INT
+   11     | BOOL
+
+   12 Mainblock: START stmts END
+
+   13 stmts: stmts stmt
+   14      | stmt
+
+   15 stmt: ID ASSIGN_OP expr ';'
+   16     | ID '[' expr ']' ASSIGN_OP expr ';'
+   17     | READ '(' ID ')' ';'
+   18     | READ '(' ID '[' expr ']' ')' ';'
+   19     | WRITE '(' expr ')' ';'
+   20     | IF '(' expr ')' THEN stmts ENDIF ';'
+   21     | IF '(' expr ')' THEN stmts ELSE stmts ENDIF ';'
+   22     | WHILE '(' expr ')' DO stmts ENDWHILE ';'
+
+   23 expr: expr P expr
+   24     | expr M expr
+   25     | expr S expr
+   26     | expr R expr
+   27     | expr D expr
+   28     | expr RELOP expr
+   29     | '(' expr ')'
+   30     | M expr
+   31     | expr C expr
+   32     | NUMBER
+   33     | ID
+   34     | ID '[' expr ']'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 17 18 19 20 21 22 29
+')' (41) 17 18 19 20 21 22 29
+',' (44) 6
+';' (59) 5 15 16 17 18 19 20 21 22
+'[' (91) 9 16 18 34
+']' (93) 9 16 18 34
+error (256)
+NUMBER (258) 9 32
+END (259) 12
+START (260) 12
+P (261) 23
+M (262) 24 30
+S (263) 25
+D (264) 27
+C (265) 31
+R (266) 26
+READ (267) 17 18
+WRITE (268) 19
+ASSIGN_OP (269) 15 16
+ID (270) 8 9 15 16 17 18 33 34
+WHILE (271) 22
+DO (272) 22
+ENDWHILE (273) 22
+IF (274) 20 21
+THEN (275) 20 21
+ENDIF (276) 20 21
+ELSE (277) 21
+DECL (278) 2
+ENDDECL (279) 2
+INT (280) 10
+BOOL (281) 11
+RELOP (282) 28
+UMINUS (283)
+
+
+Nonterminals, with rules where they appear
+
+$accept (35)
+    on left: 0
+start (36)
+    on left: 1, on right: 0
+Declblock (37)
+    on left: 2, on right: 1
+Declist (38)
+    on left: 3 4, on right: 2 4
+decl (39)
+    on left: 5, on right: 3 4
+Idlist (40)
+    on left: 6 7, on right: 5 6
+Ids (41)
+    on left: 8 9, on right: 6 7
+Type (42)
+    on left: 10 11, on right: 5
+Mainblock (43)
+    on left: 12, on right: 1
+stmts (44)
+    on left: 13 14, on right: 12 13 20 21 22
+stmt (45)
+    on left: 15 16 17 18 19 20 21 22, on right: 13 14
+expr (46)
+    on left: 23 24 25 26 27 28 29 30 31 32 33 34, on right: 15 16 18
+    19 20 21 22 23 24 25 26 27 28 29 30 31 34
+
+
+state 0
+
+    0 $accept: . start $end
+
+    DECL  shift, and go to state 1
+
+    start      go to state 2
+    Declblock  go to state 3
+
+
+state 1
+
+    2 Declblock: DECL . Declist ENDDECL
+
+    INT   shift, and go to state 4
+    BOOL  shift, and go to state 5
+
+    Declist  go to state 6
+    decl     go to state 7
+    Type     go to state 8
+
+
+state 2
+
+    0 $accept: start . $end
+
+    $end  shift, and go to state 9
+
+
+state 3
+
+    1 start: Declblock . Mainblock
+
+    START  shift, and go to state 10
+
+    Mainblock  go to state 11
+
+
+state 4
+
+   10 Type: INT .
+
+    $default  reduce using rule 10 (Type)
+
+
+state 5
+
+   11 Type: BOOL .
+
+    $default  reduce using rule 11 (Type)
+
+
+state 6
+
+    2 Declblock: DECL Declist . ENDDECL
+    4 Declist: Declist . decl
+
+    ENDDECL  shift, and go to state 12
+    INT      shift, and go to state 4
+    BOOL     shift, and go to state 5
+
+    decl  go to state 13
+    Type  go to state 8
+
+
+state 7
+
+    3 Declist: decl .
+
+    $default  reduce using rule 3 (Declist)
+
+
+state 8
+
+    5 decl: Type . Idlist ';'
+
+    ID  shift, and go to state 14
+
+    Idlist  go to state 15
+    Ids     go to state 16
+
+
+state 9
+
+    0 $accept: start $end .
+
+    $default  accept
+
+
+state 10
+
+   12 Mainblock: START . stmts END
+
+    READ   shift, and go to state 17
+    WRITE  shift, and go to state 18
+    ID     shift, and go to state 19
+    WHILE  shift, and go to state 20
+    IF     shift, and go to state 21
+
+    stmts  go to state 22
+    stmt   go to state 23
+
+
+state 11
+
+    1 start: Declblock Mainblock .
+
+    $default  reduce using rule 1 (start)
+
+
+state 12
+
+    2 Declblock: DECL Declist ENDDECL .
+
+    $default  reduce using rule 2 (Declblock)
+
+
+state 13
+
+    4 Declist: Declist decl .
+
+    $default  reduce using rule 4 (Declist)
+
+
+state 14
+
+    8 Ids: ID .
+    9    | ID . '[' NUMBER ']'
+
+    '['  shift, and go to state 24
+
+    $default  reduce using rule 8 (Ids)
+
+
+state 15
+
+    5 decl: Type Idlist . ';'
+    6 Idlist: Idlist . ',' Ids
+
+    ';'  shift, and go to state 25
+    ','  shift, and go to state 26
+
+
+state 16
+
+    7 Idlist: Ids .
+
+    $default  reduce using rule 7 (Idlist)
+
+
+state 17
+
+   17 stmt: READ . '(' ID ')' ';'
+   18     | READ . '(' ID '[' expr ']' ')' ';'
+
+    '('  shift, and go to state 27
+
+
+state 18
+
+   19 stmt: WRITE . '(' expr ')' ';'
+
+    '('  shift, and go to state 28
+
+
+state 19
+
+   15 stmt: ID . ASSIGN_OP expr ';'
+   16     | ID . '[' expr ']' ASSIGN_OP expr ';'
+
+    ASSIGN_OP  shift, and go to state 29
+    '['        shift, and go to state 30
+
+
+state 20
+
+   22 stmt: WHILE . '(' expr ')' DO stmts ENDWHILE ';'
+
+    '('  shift, and go to state 31
+
+
+state 21
+
+   20 stmt: IF . '(' expr ')' THEN stmts ENDIF ';'
+   21     | IF . '(' expr ')' THEN stmts ELSE stmts ENDIF ';'
+
+    '('  shift, and go to state 32
+
+
+state 22
+
+   12 Mainblock: START stmts . END
+   13 stmts: stmts . stmt
+
+    END    shift, and go to state 33
+    READ   shift, and go to state 17
+    WRITE  shift, and go to state 18
+    ID     shift, and go to state 19
+    WHILE  shift, and go to state 20
+    IF     shift, and go to state 21
+
+    stmt  go to state 34
+
+
+state 23
+
+   14 stmts: stmt .
+
+    $default  reduce using rule 14 (stmts)
+
+
+state 24
+
+    9 Ids: ID '[' . NUMBER ']'
+
+    NUMBER  shift, and go to state 35
+
+
+state 25
+
+    5 decl: Type Idlist ';' .
+
+    $default  reduce using rule 5 (decl)
+
+
+state 26
+
+    6 Idlist: Idlist ',' . Ids
+
+    ID  shift, and go to state 14
+
+    Ids  go to state 36
+
+
+state 27
+
+   17 stmt: READ '(' . ID ')' ';'
+   18     | READ '(' . ID '[' expr ']' ')' ';'
+
+    ID  shift, and go to state 37
+
+
+state 28
+
+   19 stmt: WRITE '(' . expr ')' ';'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 42
+
+
+state 29
+
+   15 stmt: ID ASSIGN_OP . expr ';'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 43
+
+
+state 30
+
+   16 stmt: ID '[' . expr ']' ASSIGN_OP expr ';'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 44
+
+
+state 31
+
+   22 stmt: WHILE '(' . expr ')' DO stmts ENDWHILE ';'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 45
+
+
+state 32
+
+   20 stmt: IF '(' . expr ')' THEN stmts ENDIF ';'
+   21     | IF '(' . expr ')' THEN stmts ELSE stmts ENDIF ';'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 46
+
+
+state 33
+
+   12 Mainblock: START stmts END .
+
+    $default  reduce using rule 12 (Mainblock)
+
+
+state 34
+
+   13 stmts: stmts stmt .
+
+    $default  reduce using rule 13 (stmts)
+
+
+state 35
+
+    9 Ids: ID '[' NUMBER . ']'
+
+    ']'  shift, and go to state 47
+
+
+state 36
+
+    6 Idlist: Idlist ',' Ids .
+
+    $default  reduce using rule 6 (Idlist)
+
+
+state 37
+
+   17 stmt: READ '(' ID . ')' ';'
+   18     | READ '(' ID . '[' expr ']' ')' ';'
+
+    '['  shift, and go to state 48
+    ')'  shift, and go to state 49
+
+
+state 38
+
+   32 expr: NUMBER .
+
+    $default  reduce using rule 32 (expr)
+
+
+state 39
+
+   30 expr: M . expr
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 50
+
+
+state 40
+
+   33 expr: ID .
+   34     | ID . '[' expr ']'
+
+    '['  shift, and go to state 51
+
+    $default  reduce using rule 33 (expr)
+
+
+state 41
+
+   29 expr: '(' . expr ')'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 52
+
+
+state 42
+
+   19 stmt: WRITE '(' expr . ')' ';'
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ')'    shift, and go to state 60
+
+
+state 43
+
+   15 stmt: ID ASSIGN_OP expr . ';'
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ';'    shift, and go to state 61
+
+
+state 44
+
+   16 stmt: ID '[' expr . ']' ASSIGN_OP expr ';'
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ']'    shift, and go to state 62
+
+
+state 45
+
+   22 stmt: WHILE '(' expr . ')' DO stmts ENDWHILE ';'
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ')'    shift, and go to state 63
+
+
+state 46
+
+   20 stmt: IF '(' expr . ')' THEN stmts ENDIF ';'
+   21     | IF '(' expr . ')' THEN stmts ELSE stmts ENDIF ';'
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ')'    shift, and go to state 64
+
+
+state 47
+
+    9 Ids: ID '[' NUMBER ']' .
+
+    $default  reduce using rule 9 (Ids)
+
+
+state 48
+
+   18 stmt: READ '(' ID '[' . expr ']' ')' ';'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 65
+
+
+state 49
+
+   17 stmt: READ '(' ID ')' . ';'
+
+    ';'  shift, and go to state 66
+
+
+state 50
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   30     | M expr .
+   31     | expr . C expr
+
+    $default  reduce using rule 30 (expr)
+
+
+state 51
+
+   34 expr: ID '[' . expr ']'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 67
+
+
+state 52
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   29     | '(' expr . ')'
+   31     | expr . C expr
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ')'    shift, and go to state 68
+
+
+state 53
+
+   23 expr: expr P . expr
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 69
+
+
+state 54
+
+   24 expr: expr M . expr
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 70
+
+
+state 55
+
+   25 expr: expr S . expr
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 71
+
+
+state 56
+
+   27 expr: expr D . expr
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 72
+
+
+state 57
+
+   31 expr: expr C . expr
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 73
+
+
+state 58
+
+   26 expr: expr R . expr
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 74
+
+
+state 59
+
+   28 expr: expr RELOP . expr
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 75
+
+
+state 60
+
+   19 stmt: WRITE '(' expr ')' . ';'
+
+    ';'  shift, and go to state 76
+
+
+state 61
+
+   15 stmt: ID ASSIGN_OP expr ';' .
+
+    $default  reduce using rule 15 (stmt)
+
+
+state 62
+
+   16 stmt: ID '[' expr ']' . ASSIGN_OP expr ';'
+
+    ASSIGN_OP  shift, and go to state 77
+
+
+state 63
+
+   22 stmt: WHILE '(' expr ')' . DO stmts ENDWHILE ';'
+
+    DO  shift, and go to state 78
+
+
+state 64
+
+   20 stmt: IF '(' expr ')' . THEN stmts ENDIF ';'
+   21     | IF '(' expr ')' . THEN stmts ELSE stmts ENDIF ';'
+
+    THEN  shift, and go to state 79
+
+
+state 65
+
+   18 stmt: READ '(' ID '[' expr . ']' ')' ';'
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ']'    shift, and go to state 80
+
+
+state 66
+
+   17 stmt: READ '(' ID ')' ';' .
+
+    $default  reduce using rule 17 (stmt)
+
+
+state 67
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+   34     | ID '[' expr . ']'
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ']'    shift, and go to state 81
+
+
+state 68
+
+   29 expr: '(' expr ')' .
+
+    $default  reduce using rule 29 (expr)
+
+
+state 69
+
+   23 expr: expr . P expr
+   23     | expr P expr .
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    M  shift, and go to state 54
+    D  shift, and go to state 56
+    C  shift, and go to state 57
+    R  shift, and go to state 58
+
+    $default  reduce using rule 23 (expr)
+
+
+state 70
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   24     | expr M expr .
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    C  shift, and go to state 57
+    R  shift, and go to state 58
+
+    $default  reduce using rule 24 (expr)
+
+
+state 71
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   25     | expr S expr .
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    M  shift, and go to state 54
+    D  shift, and go to state 56
+    C  shift, and go to state 57
+    R  shift, and go to state 58
+
+    $default  reduce using rule 25 (expr)
+
+
+state 72
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   27     | expr D expr .
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    C  shift, and go to state 57
+    R  shift, and go to state 58
+
+    $default  reduce using rule 27 (expr)
+
+
+state 73
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+   31     | expr C expr .
+
+    R  shift, and go to state 58
+
+    C  error (nonassociative)
+
+    $default  reduce using rule 31 (expr)
+
+
+state 74
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   26     | expr R expr .
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    R  error (nonassociative)
+
+    $default  reduce using rule 26 (expr)
+
+
+state 75
+
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   28     | expr RELOP expr .
+   31     | expr . C expr
+
+    P  shift, and go to state 53
+    M  shift, and go to state 54
+    S  shift, and go to state 55
+    D  shift, and go to state 56
+    C  shift, and go to state 57
+    R  shift, and go to state 58
+
+    $default  reduce using rule 28 (expr)
+
+
+state 76
+
+   19 stmt: WRITE '(' expr ')' ';' .
+
+    $default  reduce using rule 19 (stmt)
+
+
+state 77
+
+   16 stmt: ID '[' expr ']' ASSIGN_OP . expr ';'
+
+    NUMBER  shift, and go to state 38
+    M       shift, and go to state 39
+    ID      shift, and go to state 40
+    '('     shift, and go to state 41
+
+    expr  go to state 82
+
+
+state 78
+
+   22 stmt: WHILE '(' expr ')' DO . stmts ENDWHILE ';'
+
+    READ   shift, and go to state 17
+    WRITE  shift, and go to state 18
+    ID     shift, and go to state 19
+    WHILE  shift, and go to state 20
+    IF     shift, and go to state 21
+
+    stmts  go to state 83
+    stmt   go to state 23
+
+
+state 79
+
+   20 stmt: IF '(' expr ')' THEN . stmts ENDIF ';'
+   21     | IF '(' expr ')' THEN . stmts ELSE stmts ENDIF ';'
+
+    READ   shift, and go to state 17
+    WRITE  shift, and go to state 18
+    ID     shift, and go to state 19
+    WHILE  shift, and go to state 20
+    IF     shift, and go to state 21
+
+    stmts  go to state 84
+    stmt   go to state 23
+
+
+state 80
+
+   18 stmt: READ '(' ID '[' expr ']' . ')' ';'
+
+    ')'  shift, and go to state 85
+
+
+state 81
+
+   34 expr: ID '[' expr ']' .
+
+    $default  reduce using rule 34 (expr)
+
+
+state 82
+
+   16 stmt: ID '[' expr ']' ASSIGN_OP expr . ';'
+   23 expr: expr . P expr
+   24     | expr . M expr
+   25     | expr . S expr
+   26     | expr . R expr
+   27     | expr . D expr
+   28     | expr . RELOP expr
+   31     | expr . C expr
+
+    P      shift, and go to state 53
+    M      shift, and go to state 54
+    S      shift, and go to state 55
+    D      shift, and go to state 56
+    C      shift, and go to state 57
+    R      shift, and go to state 58
+    RELOP  shift, and go to state 59
+    ';'    shift, and go to state 86
+
+
+state 83
+
+   13 stmts: stmts . stmt
+   22 stmt: WHILE '(' expr ')' DO stmts . ENDWHILE ';'
+
+    READ      shift, and go to state 17
+    WRITE     shift, and go to state 18
+    ID        shift, and go to state 19
+    WHILE     shift, and go to state 20
+    ENDWHILE  shift, and go to state 87
+    IF        shift, and go to state 21
+
+    stmt  go to state 34
+
+
+state 84
+
+   13 stmts: stmts . stmt
+   20 stmt: IF '(' expr ')' THEN stmts . ENDIF ';'
+   21     | IF '(' expr ')' THEN stmts . ELSE stmts ENDIF ';'
+
+    READ   shift, and go to state 17
+    WRITE  shift, and go to state 18
+    ID     shift, and go to state 19
+    WHILE  shift, and go to state 20
+    IF     shift, and go to state 21
+    ENDIF  shift, and go to state 88
+    ELSE   shift, and go to state 89
+
+    stmt  go to state 34
+
+
+state 85
+
+   18 stmt: READ '(' ID '[' expr ']' ')' . ';'
+
+    ';'  shift, and go to state 90
+
+
+state 86
+
+   16 stmt: ID '[' expr ']' ASSIGN_OP expr ';' .
+
+    $default  reduce using rule 16 (stmt)
+
+
+state 87
+
+   22 stmt: WHILE '(' expr ')' DO stmts ENDWHILE . ';'
+
+    ';'  shift, and go to state 91
+
+
+state 88
+
+   20 stmt: IF '(' expr ')' THEN stmts ENDIF . ';'
+
+    ';'  shift, and go to state 92
+
+
+state 89
+
+   21 stmt: IF '(' expr ')' THEN stmts ELSE . stmts ENDIF ';'
+
+    READ   shift, and go to state 17
+    WRITE  shift, and go to state 18
+    ID     shift, and go to state 19
+    WHILE  shift, and go to state 20
+    IF     shift, and go to state 21
+
+    stmts  go to state 93
+    stmt   go to state 23
+
+
+state 90
+
+   18 stmt: READ '(' ID '[' expr ']' ')' ';' .
+
+    $default  reduce using rule 18 (stmt)
+
+
+state 91
+
+   22 stmt: WHILE '(' expr ')' DO stmts ENDWHILE ';' .
+
+    $default  reduce using rule 22 (stmt)
+
+
+state 92
+
+   20 stmt: IF '(' expr ')' THEN stmts ENDIF ';' .
+
+    $default  reduce using rule 20 (stmt)
+
+
+state 93
+
+   13 stmts: stmts . stmt
+   21 stmt: IF '(' expr ')' THEN stmts ELSE stmts . ENDIF ';'
+
+    READ   shift, and go to state 17
+    WRITE  shift, and go to state 18
+    ID     shift, and go to state 19
+    WHILE  shift, and go to state 20
+    IF     shift, and go to state 21
+    ENDIF  shift, and go to state 94
+
+    stmt  go to state 34
+
+
+state 94
+
+   21 stmt: IF '(' expr ')' THEN stmts ELSE stmts ENDIF . ';'
+
+    ';'  shift, and go to state 95
+
+
+state 95
+
+   21 stmt: IF '(' expr ')' THEN stmts ELSE stmts ENDIF ';' .
+
+    $default  reduce using rule 21 (stmt)
