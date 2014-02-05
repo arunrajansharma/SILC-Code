@@ -1,10 +1,17 @@
 decl
+integer array[5];
 integer x;
 boolean y;
+
 enddecl
 start
-read(x);
-x = x+2;
-write(y);
+y = TRUE;
+if(y) 
+then 
+read(array[1]);
+x = array[1] + 10 ;
+write(x);
+endif;
+write(100000);
 end
 

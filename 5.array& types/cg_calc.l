@@ -95,8 +95,19 @@ alpha   [a-z]+
 			return WRITE;
 
                }
-"TRUE"         { 
+"TRUE"         {        yylval.ptr =  malloc(sizeof(struct node));
+                        yylval.ptr->VALUE = 1;
+                        yylval.ptr->TYPE = BOOLEAN;
+                        yylval.ptr->NODE_TYPE = NUM;
+                        return BOOLEAN_NUMBER;                     
+                        
                 }
+"FALSE"        {        yylval.ptr =  malloc(sizeof(struct node));
+                        yylval.ptr->VALUE = 0;
+                        yylval.ptr->TYPE = BOOLEAN;
+                        yylval.ptr->NODE_TYPE = NUM;
+                        return BOOLEAN_NUMBER;
+               }
 {alpha}        {        
                       
                         yylval.ptr = malloc(sizeof(struct node));

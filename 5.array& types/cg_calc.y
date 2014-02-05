@@ -131,7 +131,7 @@ int wpop()
 	
 };
 
-%token <ptr> NUMBER
+%token <ptr> NUMBER BOOLEAN_NUMBER
 %token END   START
 %token <ptr> P M S D C R READ WRITE ASSIGN_OP ID   WHILE  DO ENDWHILE
 %token IF THEN ENDIF ELSE  DECL ENDDECL INT BOOL
@@ -140,7 +140,7 @@ int wpop()
 %left M D
 %nonassoc C
 %nonassoc R 
-%nonassoc UMINUS
+%right UMINUS
 
 %type <ptr> expr stmts stmt
 %start start
@@ -297,10 +297,27 @@ expr 	:  expr P expr				{	if( $1->TYPE == $2->TYPE && $2->TYPE == $3->TYPE )
                                                       
                                                 }
         | '(' expr ')'				{	$$=$2;}
-	| M expr %prec UMINUS			{	$$=makenode($1,$2,NULL,NULL);}
-	| expr C expr 				{	$$=makenode($2,$1,$3,NULL);$2->TYPE=1;}
+
+	| S expr %prec UMINUS			{	if($1->TYPE == $2->TYPE)
+                                                          { $$=makenode($1,$2,NULL,NULL);
+                                                          }
+                                                         else { yyerror("Type Mismatch"); }
+                                                }
+	| expr C expr 				{	if( $1->TYPE == $2->TYPE && $2->TYPE == $3->TYPE )
+						   	  $$=makenode($2,$1,$3,NULL);
+						  else
+						  	{ yyerror("Type Mismatch");   }
+                                                }
         
 	| NUMBER				{	$$=$1;}
+         
+        |BOOLEAN_NUMBER                         { $$=$1;
+                                                  $$->TYPE = BOOLEAN; 
+                                                } 
+
+
+
+
         | ID                                    {                                                                  
                                                         $$ = $1;
 						  struct symbol_table* temp = Lookup($$->NAME);
@@ -501,41 +518,23 @@ int calculate(struct node *t)
 		             
 		             else 
 		              {
-                                   calculate(t->P2);
-							   
-							  
-								    
-								    
-				   res_reg(1);
+                                   calculate(t->P2);					   
+					 
+			           res_reg(1);
 			           fprintf(fp,"\nMOV R%d,%d", use_reg(1), check->BINDING);
-			           				   
-								   
-								   
-								   fprintf(fp,"\nADD R%d,R%d",use_reg(2),use_reg(1));
-								    free_reg(1);				   
-								    calculate(t->P3);
-								   
-								   fprintf(fp,"\nMOV [R%d],R%d", use_reg(2), use_reg(1));
-								   
-								   free_reg(2);   	
+			           fprintf(fp,"\nADD R%d,R%d",use_reg(2),use_reg(1)); 
+	         		   free_reg(1);
+
+				   calculate(t->P3);						   
+				   fprintf(fp,"\nMOV [R%d],R%d", use_reg(2), use_reg(1));
+				   free_reg(2);   	
 							  	              
 		              }
                            
                            }
  
-               }                      /* 
-                      
-                       *(check->VALUE) = calculate(t->P3);
-                         res_reg(2);
-			fprintf(fp,"\nMOV R%d,BP",use_reg(2));
-			fprintf(fp,"\nMOV R%d,%d",use_reg(1),BINDING);
-			fprintf(fp,"\nADD R%d,R%d",use_reg(2),use_reg(1));
-			free_reg(1);
-			calculate(t->P2);
-                   	fprintf(fp,"\nMOV [R%d],R%d",use_reg(2),use_reg(1));
-                 free_reg(2);
-                  */
-                   
+               }     
+                
                 else if (t->NODE_TYPE == IF_THEN)
                 {   
                            fprintf(fp,"\nI%d:", ifcount);
@@ -584,16 +583,35 @@ int calculate(struct node *t)
                 }
            	else if(t->NODE_TYPE == READ_NODE)
                 {    
-			res_reg(1);			
-			fprintf(fp,"\nIN R%d",use_reg(1));
-                        struct symbol_table *temp_node;
-                         temp_node = Lookup(t->P1->NAME);
-                      	
-                        res_reg(2);
-			fprintf(fp,"\nMOV R%d,%d",use_reg(2),temp_node->BINDING);
-			fprintf(fp,"\nADD R%d,R%d",use_reg(1),use_reg(2));
-			fprintf(fp,"\nMOV [R%d],R%d",use_reg(1),use_reg(3));
-			free_reg(3);
+			struct symbol_table * check = Lookup(t->P1->NAME);
+                        if(check == NULL)
+                             yyerror("Undefined symbol in Read ");
+                        else
+                          { if(t->P2 ==NULL)
+                            { res_reg(1);
+                              fprintf(fp,"\nIN R%d",use_reg(1) );
+                              fprintf(fp,"\nMOV [%d],R%d", check->BINDING,use_reg(1));
+                              free_reg(1);
+                            }
+                           else
+                           { 
+                                calculate(t->P2);
+                                res_reg(1);
+                              
+                                fprintf(fp,"\nMOV R%d,%d", use_reg(1), check->BINDING);
+                                 fprintf(fp,"\nADD R%d,R%d",use_reg(2),use_reg(1));
+			         
+              	                fprintf(fp,"\nIN R%d",use_reg(1) );
+                                fprintf(fp,"\nMOV[R%d],R%d", use_reg(2),use_reg(1));
+                                free_reg(1);
+                            }
+
+
+
+                          }
+                        
+
+
                 }
                
              else if (t->NODE_TYPE == LT)

@@ -38,60 +38,62 @@
       know about them.  */
    enum yytokentype {
      NUMBER = 258,
-     END = 259,
-     START = 260,
-     P = 261,
-     M = 262,
-     S = 263,
-     D = 264,
-     C = 265,
-     R = 266,
-     READ = 267,
-     WRITE = 268,
-     ASSIGN_OP = 269,
-     ID = 270,
-     WHILE = 271,
-     DO = 272,
-     ENDWHILE = 273,
-     IF = 274,
-     THEN = 275,
-     ENDIF = 276,
-     ELSE = 277,
-     DECL = 278,
-     ENDDECL = 279,
-     INT = 280,
-     BOOL = 281,
-     RELOP = 282,
-     UMINUS = 283
+     BOOLEAN_NUMBER = 259,
+     END = 260,
+     START = 261,
+     P = 262,
+     M = 263,
+     S = 264,
+     D = 265,
+     C = 266,
+     R = 267,
+     READ = 268,
+     WRITE = 269,
+     ASSIGN_OP = 270,
+     ID = 271,
+     WHILE = 272,
+     DO = 273,
+     ENDWHILE = 274,
+     IF = 275,
+     THEN = 276,
+     ENDIF = 277,
+     ELSE = 278,
+     DECL = 279,
+     ENDDECL = 280,
+     INT = 281,
+     BOOL = 282,
+     RELOP = 283,
+     UMINUS = 284
    };
 #endif
 /* Tokens.  */
 #define NUMBER 258
-#define END 259
-#define START 260
-#define P 261
-#define M 262
-#define S 263
-#define D 264
-#define C 265
-#define R 266
-#define READ 267
-#define WRITE 268
-#define ASSIGN_OP 269
-#define ID 270
-#define WHILE 271
-#define DO 272
-#define ENDWHILE 273
-#define IF 274
-#define THEN 275
-#define ENDIF 276
-#define ELSE 277
-#define DECL 278
-#define ENDDECL 279
-#define INT 280
-#define BOOL 281
-#define RELOP 282
-#define UMINUS 283
+#define BOOLEAN_NUMBER 259
+#define END 260
+#define START 261
+#define P 262
+#define M 263
+#define S 264
+#define D 265
+#define C 266
+#define R 267
+#define READ 268
+#define WRITE 269
+#define ASSIGN_OP 270
+#define ID 271
+#define WHILE 272
+#define DO 273
+#define ENDWHILE 274
+#define IF 275
+#define THEN 276
+#define ENDIF 277
+#define ELSE 278
+#define DECL 279
+#define ENDDECL 280
+#define INT 281
+#define BOOL 282
+#define RELOP 283
+#define UMINUS 284
 
 
 
@@ -109,7 +111,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 113 "y.tab.h"
+#line 115 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
