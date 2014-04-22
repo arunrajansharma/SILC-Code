@@ -1,0 +1,2148 @@
+Grammar
+
+    0 $accept: start $end
+
+    1 start: Declblock fDefblock Mainblock
+    2      | Mainblock
+    3      | Declblock Mainblock
+
+    4 Declblock: DECL Declist ENDDECL
+
+    5 Declist: decl
+    6        | Declist decl
+
+    7 decl: Type Idlist ';'
+
+    8 Idlist: Idlist ',' Ids
+    9       | Ids
+
+   10 Ids: ID
+   11    | ID '[' NUMBER ']'
+   12    | ID '(' arglist ')'
+
+   13 arglist: arg
+   14        | arglist ';' arg
+   15        | /* empty */
+
+   16 fArgdef: farglist
+   17        | /* empty */
+
+   18 farglist: arg
+   19         | farglist ';' arg
+
+   20 arg: argtype argIDlist
+
+   21 argIDlist: argID
+   22          | argIDlist ',' argID
+
+   23 argID: ID
+   24      | '&' ID
+
+   25 argtype: INT
+   26        | BOOL
+
+   27 Type: INT
+   28     | BOOL
+
+   29 fDefblock: fDefblock fDef
+   30          | fDef
+
+   31 fDef: Rtype ID '(' fArgdef ')' '{' fBlock '}'
+
+   32 Rtype: INT
+   33      | BOOL
+
+   34 Mainblock: INT MAIN '(' ')' '{' fBlock '}'
+
+   35 fBlock: LDefblock stmtblock
+   36       | stmtblock
+
+   37 LDefblock: DECL LDlist ENDDECL
+
+   38 LDlist: LDecl
+   39       | LDlist LDecl
+
+   40 LDecl: Type LIdlist ';'
+
+   41 LIdlist: LIdlist ',' LId
+   42        | LId
+
+   43 LId: ID
+
+   44 stmtblock: BEG stmts END
+   45          | BEG END
+
+   46 stmts: stmts stmt
+   47      | stmt
+
+   48 stmt: ID ASSIGN_OP expr ';'
+   49     | ID '[' expr ']' ASSIGN_OP expr ';'
+   50     | READ '(' ID ')' ';'
+   51     | READ '(' ID '[' expr ']' ')' ';'
+   52     | WRITE '(' expr ')' ';'
+   53     | IF '(' expr ')' THEN stmts ENDIF ';'
+   54     | IF '(' expr ')' THEN stmts ELSE stmts ENDIF ';'
+   55     | WHILE '(' expr ')' DO stmts ENDWHILE ';'
+   56     | RETURN expr ';'
+
+   57 expr: expr P expr
+   58     | expr M expr
+   59     | expr S expr
+   60     | expr R expr
+   61     | expr D expr
+   62     | expr RELOP expr
+   63     | '(' expr ')'
+   64     | S expr
+   65     | expr C expr
+   66     | expr AND expr
+   67     | expr OR expr
+   68     | NOT expr
+   69     | NUMBER
+   70     | BOOLEAN_NUMBER
+   71     | ID
+   72     | ID '[' expr ']'
+   73     | ID '(' exprlist ')'
+
+   74 exprlist: expr
+   75         | exprlist ',' expr
+   76         | /* empty */
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'&' (38) 24
+'(' (40) 12 31 34 50 51 52 53 54 55 63 73
+')' (41) 12 31 34 50 51 52 53 54 55 63 73
+',' (44) 8 22 41 75
+';' (59) 7 14 19 40 48 49 50 51 52 53 54 55 56
+'[' (91) 11 49 51 72
+']' (93) 11 49 51 72
+'{' (123) 31 34
+'}' (125) 31 34
+error (256)
+NUMBER (258) 11 69
+BOOLEAN_NUMBER (259) 70
+P (260) 57
+M (261) 58
+S (262) 59 64
+D (263) 61
+C (264) 65
+R (265) 60
+READ (266) 50 51
+WRITE (267) 52
+ASSIGN_OP (268) 48 49
+ID (269) 10 11 12 23 24 31 43 48 49 50 51 71 72 73
+WHILE (270) 55
+DO (271) 55
+ENDWHILE (272) 55
+AND (273) 66
+OR (274) 67
+NOT (275) 68
+IF (276) 53 54
+THEN (277) 53 54
+ENDIF (278) 53 54
+ELSE (279) 54
+DECL (280) 4 37
+ENDDECL (281) 4 37
+INT (282) 25 27 32 34
+BOOL (283) 26 28 33
+RETURN (284) 56
+MAIN (285) 34
+BEG (286) 44 45
+END (287) 44 45
+RELOP (288) 62
+UMINUS (289)
+
+
+Nonterminals, with rules where they appear
+
+$accept (44)
+    on left: 0
+start (45)
+    on left: 1 2 3, on right: 0
+Declblock (46)
+    on left: 4, on right: 1 3
+Declist (47)
+    on left: 5 6, on right: 4 6
+decl (48)
+    on left: 7, on right: 5 6
+Idlist (49)
+    on left: 8 9, on right: 7 8
+Ids (50)
+    on left: 10 11 12, on right: 8 9
+arglist (51)
+    on left: 13 14 15, on right: 12 14
+fArgdef (52)
+    on left: 16 17, on right: 31
+farglist (53)
+    on left: 18 19, on right: 16 19
+arg (54)
+    on left: 20, on right: 13 14 18 19
+argIDlist (55)
+    on left: 21 22, on right: 20 22
+argID (56)
+    on left: 23 24, on right: 21 22
+argtype (57)
+    on left: 25 26, on right: 20
+Type (58)
+    on left: 27 28, on right: 7 40
+fDefblock (59)
+    on left: 29 30, on right: 1 29
+fDef (60)
+    on left: 31, on right: 29 30
+Rtype (61)
+    on left: 32 33, on right: 31
+Mainblock (62)
+    on left: 34, on right: 1 2 3
+fBlock (63)
+    on left: 35 36, on right: 31 34
+LDefblock (64)
+    on left: 37, on right: 35
+LDlist (65)
+    on left: 38 39, on right: 37 39
+LDecl (66)
+    on left: 40, on right: 38 39
+LIdlist (67)
+    on left: 41 42, on right: 40 41
+LId (68)
+    on left: 43, on right: 41 42
+stmtblock (69)
+    on left: 44 45, on right: 35 36
+stmts (70)
+    on left: 46 47, on right: 44 46 53 54 55
+stmt (71)
+    on left: 48 49 50 51 52 53 54 55 56, on right: 46 47
+expr (72)
+    on left: 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73, on right:
+    48 49 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 72
+    74 75
+exprlist (73)
+    on left: 74 75 76, on right: 73 75
+
+
+state 0
+
+    0 $accept: . start $end
+
+    DECL  shift, and go to state 1
+    INT   shift, and go to state 2
+
+    start      go to state 3
+    Declblock  go to state 4
+    Mainblock  go to state 5
+
+
+state 1
+
+    4 Declblock: DECL . Declist ENDDECL
+
+    INT   shift, and go to state 6
+    BOOL  shift, and go to state 7
+
+    Declist  go to state 8
+    decl     go to state 9
+    Type     go to state 10
+
+
+state 2
+
+   34 Mainblock: INT . MAIN '(' ')' '{' fBlock '}'
+
+    MAIN  shift, and go to state 11
+
+
+state 3
+
+    0 $accept: start . $end
+
+    $end  shift, and go to state 12
+
+
+state 4
+
+    1 start: Declblock . fDefblock Mainblock
+    3      | Declblock . Mainblock
+
+    INT   shift, and go to state 13
+    BOOL  shift, and go to state 14
+
+    fDefblock  go to state 15
+    fDef       go to state 16
+    Rtype      go to state 17
+    Mainblock  go to state 18
+
+
+state 5
+
+    2 start: Mainblock .
+
+    $default  reduce using rule 2 (start)
+
+
+state 6
+
+   27 Type: INT .
+
+    $default  reduce using rule 27 (Type)
+
+
+state 7
+
+   28 Type: BOOL .
+
+    $default  reduce using rule 28 (Type)
+
+
+state 8
+
+    4 Declblock: DECL Declist . ENDDECL
+    6 Declist: Declist . decl
+
+    ENDDECL  shift, and go to state 19
+    INT      shift, and go to state 6
+    BOOL     shift, and go to state 7
+
+    decl  go to state 20
+    Type  go to state 10
+
+
+state 9
+
+    5 Declist: decl .
+
+    $default  reduce using rule 5 (Declist)
+
+
+state 10
+
+    7 decl: Type . Idlist ';'
+
+    ID  shift, and go to state 21
+
+    Idlist  go to state 22
+    Ids     go to state 23
+
+
+state 11
+
+   34 Mainblock: INT MAIN . '(' ')' '{' fBlock '}'
+
+    '('  shift, and go to state 24
+
+
+state 12
+
+    0 $accept: start $end .
+
+    $default  accept
+
+
+state 13
+
+   32 Rtype: INT .
+   34 Mainblock: INT . MAIN '(' ')' '{' fBlock '}'
+
+    MAIN  shift, and go to state 11
+
+    $default  reduce using rule 32 (Rtype)
+
+
+state 14
+
+   33 Rtype: BOOL .
+
+    $default  reduce using rule 33 (Rtype)
+
+
+state 15
+
+    1 start: Declblock fDefblock . Mainblock
+   29 fDefblock: fDefblock . fDef
+
+    INT   shift, and go to state 13
+    BOOL  shift, and go to state 14
+
+    fDef       go to state 25
+    Rtype      go to state 17
+    Mainblock  go to state 26
+
+
+state 16
+
+   30 fDefblock: fDef .
+
+    $default  reduce using rule 30 (fDefblock)
+
+
+state 17
+
+   31 fDef: Rtype . ID '(' fArgdef ')' '{' fBlock '}'
+
+    ID  shift, and go to state 27
+
+
+state 18
+
+    3 start: Declblock Mainblock .
+
+    $default  reduce using rule 3 (start)
+
+
+state 19
+
+    4 Declblock: DECL Declist ENDDECL .
+
+    $default  reduce using rule 4 (Declblock)
+
+
+state 20
+
+    6 Declist: Declist decl .
+
+    $default  reduce using rule 6 (Declist)
+
+
+state 21
+
+   10 Ids: ID .
+   11    | ID . '[' NUMBER ']'
+   12    | ID . '(' arglist ')'
+
+    '['  shift, and go to state 28
+    '('  shift, and go to state 29
+
+    $default  reduce using rule 10 (Ids)
+
+
+state 22
+
+    7 decl: Type Idlist . ';'
+    8 Idlist: Idlist . ',' Ids
+
+    ';'  shift, and go to state 30
+    ','  shift, and go to state 31
+
+
+state 23
+
+    9 Idlist: Ids .
+
+    $default  reduce using rule 9 (Idlist)
+
+
+state 24
+
+   34 Mainblock: INT MAIN '(' . ')' '{' fBlock '}'
+
+    ')'  shift, and go to state 32
+
+
+state 25
+
+   29 fDefblock: fDefblock fDef .
+
+    $default  reduce using rule 29 (fDefblock)
+
+
+state 26
+
+    1 start: Declblock fDefblock Mainblock .
+
+    $default  reduce using rule 1 (start)
+
+
+state 27
+
+   31 fDef: Rtype ID . '(' fArgdef ')' '{' fBlock '}'
+
+    '('  shift, and go to state 33
+
+
+state 28
+
+   11 Ids: ID '[' . NUMBER ']'
+
+    NUMBER  shift, and go to state 34
+
+
+state 29
+
+   12 Ids: ID '(' . arglist ')'
+
+    INT   shift, and go to state 35
+    BOOL  shift, and go to state 36
+
+    $default  reduce using rule 15 (arglist)
+
+    arglist  go to state 37
+    arg      go to state 38
+    argtype  go to state 39
+
+
+state 30
+
+    7 decl: Type Idlist ';' .
+
+    $default  reduce using rule 7 (decl)
+
+
+state 31
+
+    8 Idlist: Idlist ',' . Ids
+
+    ID  shift, and go to state 21
+
+    Ids  go to state 40
+
+
+state 32
+
+   34 Mainblock: INT MAIN '(' ')' . '{' fBlock '}'
+
+    '{'  shift, and go to state 41
+
+
+state 33
+
+   31 fDef: Rtype ID '(' . fArgdef ')' '{' fBlock '}'
+
+    INT   shift, and go to state 35
+    BOOL  shift, and go to state 36
+
+    $default  reduce using rule 17 (fArgdef)
+
+    fArgdef   go to state 42
+    farglist  go to state 43
+    arg       go to state 44
+    argtype   go to state 39
+
+
+state 34
+
+   11 Ids: ID '[' NUMBER . ']'
+
+    ']'  shift, and go to state 45
+
+
+state 35
+
+   25 argtype: INT .
+
+    $default  reduce using rule 25 (argtype)
+
+
+state 36
+
+   26 argtype: BOOL .
+
+    $default  reduce using rule 26 (argtype)
+
+
+state 37
+
+   12 Ids: ID '(' arglist . ')'
+   14 arglist: arglist . ';' arg
+
+    ';'  shift, and go to state 46
+    ')'  shift, and go to state 47
+
+
+state 38
+
+   13 arglist: arg .
+
+    $default  reduce using rule 13 (arglist)
+
+
+state 39
+
+   20 arg: argtype . argIDlist
+
+    ID   shift, and go to state 48
+    '&'  shift, and go to state 49
+
+    argIDlist  go to state 50
+    argID      go to state 51
+
+
+state 40
+
+    8 Idlist: Idlist ',' Ids .
+
+    $default  reduce using rule 8 (Idlist)
+
+
+state 41
+
+   34 Mainblock: INT MAIN '(' ')' '{' . fBlock '}'
+
+    DECL  shift, and go to state 52
+    BEG   shift, and go to state 53
+
+    fBlock     go to state 54
+    LDefblock  go to state 55
+    stmtblock  go to state 56
+
+
+state 42
+
+   31 fDef: Rtype ID '(' fArgdef . ')' '{' fBlock '}'
+
+    ')'  shift, and go to state 57
+
+
+state 43
+
+   16 fArgdef: farglist .
+   19 farglist: farglist . ';' arg
+
+    ';'  shift, and go to state 58
+
+    $default  reduce using rule 16 (fArgdef)
+
+
+state 44
+
+   18 farglist: arg .
+
+    $default  reduce using rule 18 (farglist)
+
+
+state 45
+
+   11 Ids: ID '[' NUMBER ']' .
+
+    $default  reduce using rule 11 (Ids)
+
+
+state 46
+
+   14 arglist: arglist ';' . arg
+
+    INT   shift, and go to state 35
+    BOOL  shift, and go to state 36
+
+    arg      go to state 59
+    argtype  go to state 39
+
+
+state 47
+
+   12 Ids: ID '(' arglist ')' .
+
+    $default  reduce using rule 12 (Ids)
+
+
+state 48
+
+   23 argID: ID .
+
+    $default  reduce using rule 23 (argID)
+
+
+state 49
+
+   24 argID: '&' . ID
+
+    ID  shift, and go to state 60
+
+
+state 50
+
+   20 arg: argtype argIDlist .
+   22 argIDlist: argIDlist . ',' argID
+
+    ','  shift, and go to state 61
+
+    $default  reduce using rule 20 (arg)
+
+
+state 51
+
+   21 argIDlist: argID .
+
+    $default  reduce using rule 21 (argIDlist)
+
+
+state 52
+
+   37 LDefblock: DECL . LDlist ENDDECL
+
+    INT   shift, and go to state 6
+    BOOL  shift, and go to state 7
+
+    Type    go to state 62
+    LDlist  go to state 63
+    LDecl   go to state 64
+
+
+state 53
+
+   44 stmtblock: BEG . stmts END
+   45          | BEG . END
+
+    READ    shift, and go to state 65
+    WRITE   shift, and go to state 66
+    ID      shift, and go to state 67
+    WHILE   shift, and go to state 68
+    IF      shift, and go to state 69
+    RETURN  shift, and go to state 70
+    END     shift, and go to state 71
+
+    stmts  go to state 72
+    stmt   go to state 73
+
+
+state 54
+
+   34 Mainblock: INT MAIN '(' ')' '{' fBlock . '}'
+
+    '}'  shift, and go to state 74
+
+
+state 55
+
+   35 fBlock: LDefblock . stmtblock
+
+    BEG  shift, and go to state 53
+
+    stmtblock  go to state 75
+
+
+state 56
+
+   36 fBlock: stmtblock .
+
+    $default  reduce using rule 36 (fBlock)
+
+
+state 57
+
+   31 fDef: Rtype ID '(' fArgdef ')' . '{' fBlock '}'
+
+    '{'  shift, and go to state 76
+
+
+state 58
+
+   19 farglist: farglist ';' . arg
+
+    INT   shift, and go to state 35
+    BOOL  shift, and go to state 36
+
+    arg      go to state 77
+    argtype  go to state 39
+
+
+state 59
+
+   14 arglist: arglist ';' arg .
+
+    $default  reduce using rule 14 (arglist)
+
+
+state 60
+
+   24 argID: '&' ID .
+
+    $default  reduce using rule 24 (argID)
+
+
+state 61
+
+   22 argIDlist: argIDlist ',' . argID
+
+    ID   shift, and go to state 48
+    '&'  shift, and go to state 49
+
+    argID  go to state 78
+
+
+state 62
+
+   40 LDecl: Type . LIdlist ';'
+
+    ID  shift, and go to state 79
+
+    LIdlist  go to state 80
+    LId      go to state 81
+
+
+state 63
+
+   37 LDefblock: DECL LDlist . ENDDECL
+   39 LDlist: LDlist . LDecl
+
+    ENDDECL  shift, and go to state 82
+    INT      shift, and go to state 6
+    BOOL     shift, and go to state 7
+
+    Type   go to state 62
+    LDecl  go to state 83
+
+
+state 64
+
+   38 LDlist: LDecl .
+
+    $default  reduce using rule 38 (LDlist)
+
+
+state 65
+
+   50 stmt: READ . '(' ID ')' ';'
+   51     | READ . '(' ID '[' expr ']' ')' ';'
+
+    '('  shift, and go to state 84
+
+
+state 66
+
+   52 stmt: WRITE . '(' expr ')' ';'
+
+    '('  shift, and go to state 85
+
+
+state 67
+
+   48 stmt: ID . ASSIGN_OP expr ';'
+   49     | ID . '[' expr ']' ASSIGN_OP expr ';'
+
+    ASSIGN_OP  shift, and go to state 86
+    '['        shift, and go to state 87
+
+
+state 68
+
+   55 stmt: WHILE . '(' expr ')' DO stmts ENDWHILE ';'
+
+    '('  shift, and go to state 88
+
+
+state 69
+
+   53 stmt: IF . '(' expr ')' THEN stmts ENDIF ';'
+   54     | IF . '(' expr ')' THEN stmts ELSE stmts ENDIF ';'
+
+    '('  shift, and go to state 89
+
+
+state 70
+
+   56 stmt: RETURN . expr ';'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 96
+
+
+state 71
+
+   45 stmtblock: BEG END .
+
+    $default  reduce using rule 45 (stmtblock)
+
+
+state 72
+
+   44 stmtblock: BEG stmts . END
+   46 stmts: stmts . stmt
+
+    READ    shift, and go to state 65
+    WRITE   shift, and go to state 66
+    ID      shift, and go to state 67
+    WHILE   shift, and go to state 68
+    IF      shift, and go to state 69
+    RETURN  shift, and go to state 70
+    END     shift, and go to state 97
+
+    stmt  go to state 98
+
+
+state 73
+
+   47 stmts: stmt .
+
+    $default  reduce using rule 47 (stmts)
+
+
+state 74
+
+   34 Mainblock: INT MAIN '(' ')' '{' fBlock '}' .
+
+    $default  reduce using rule 34 (Mainblock)
+
+
+state 75
+
+   35 fBlock: LDefblock stmtblock .
+
+    $default  reduce using rule 35 (fBlock)
+
+
+state 76
+
+   31 fDef: Rtype ID '(' fArgdef ')' '{' . fBlock '}'
+
+    DECL  shift, and go to state 52
+    BEG   shift, and go to state 53
+
+    fBlock     go to state 99
+    LDefblock  go to state 55
+    stmtblock  go to state 56
+
+
+state 77
+
+   19 farglist: farglist ';' arg .
+
+    $default  reduce using rule 19 (farglist)
+
+
+state 78
+
+   22 argIDlist: argIDlist ',' argID .
+
+    $default  reduce using rule 22 (argIDlist)
+
+
+state 79
+
+   43 LId: ID .
+
+    $default  reduce using rule 43 (LId)
+
+
+state 80
+
+   40 LDecl: Type LIdlist . ';'
+   41 LIdlist: LIdlist . ',' LId
+
+    ';'  shift, and go to state 100
+    ','  shift, and go to state 101
+
+
+state 81
+
+   42 LIdlist: LId .
+
+    $default  reduce using rule 42 (LIdlist)
+
+
+state 82
+
+   37 LDefblock: DECL LDlist ENDDECL .
+
+    $default  reduce using rule 37 (LDefblock)
+
+
+state 83
+
+   39 LDlist: LDlist LDecl .
+
+    $default  reduce using rule 39 (LDlist)
+
+
+state 84
+
+   50 stmt: READ '(' . ID ')' ';'
+   51     | READ '(' . ID '[' expr ']' ')' ';'
+
+    ID  shift, and go to state 102
+
+
+state 85
+
+   52 stmt: WRITE '(' . expr ')' ';'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 103
+
+
+state 86
+
+   48 stmt: ID ASSIGN_OP . expr ';'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 104
+
+
+state 87
+
+   49 stmt: ID '[' . expr ']' ASSIGN_OP expr ';'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 105
+
+
+state 88
+
+   55 stmt: WHILE '(' . expr ')' DO stmts ENDWHILE ';'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 106
+
+
+state 89
+
+   53 stmt: IF '(' . expr ')' THEN stmts ENDIF ';'
+   54     | IF '(' . expr ')' THEN stmts ELSE stmts ENDIF ';'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 107
+
+
+state 90
+
+   69 expr: NUMBER .
+
+    $default  reduce using rule 69 (expr)
+
+
+state 91
+
+   70 expr: BOOLEAN_NUMBER .
+
+    $default  reduce using rule 70 (expr)
+
+
+state 92
+
+   64 expr: S . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 108
+
+
+state 93
+
+   71 expr: ID .
+   72     | ID . '[' expr ']'
+   73     | ID . '(' exprlist ')'
+
+    '['  shift, and go to state 109
+    '('  shift, and go to state 110
+
+    $default  reduce using rule 71 (expr)
+
+
+state 94
+
+   68 expr: NOT . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 111
+
+
+state 95
+
+   63 expr: '(' . expr ')'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 112
+
+
+state 96
+
+   56 stmt: RETURN expr . ';'
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ';'    shift, and go to state 122
+
+
+state 97
+
+   44 stmtblock: BEG stmts END .
+
+    $default  reduce using rule 44 (stmtblock)
+
+
+state 98
+
+   46 stmts: stmts stmt .
+
+    $default  reduce using rule 46 (stmts)
+
+
+state 99
+
+   31 fDef: Rtype ID '(' fArgdef ')' '{' fBlock . '}'
+
+    '}'  shift, and go to state 123
+
+
+state 100
+
+   40 LDecl: Type LIdlist ';' .
+
+    $default  reduce using rule 40 (LDecl)
+
+
+state 101
+
+   41 LIdlist: LIdlist ',' . LId
+
+    ID  shift, and go to state 79
+
+    LId  go to state 124
+
+
+state 102
+
+   50 stmt: READ '(' ID . ')' ';'
+   51     | READ '(' ID . '[' expr ']' ')' ';'
+
+    '['  shift, and go to state 125
+    ')'  shift, and go to state 126
+
+
+state 103
+
+   52 stmt: WRITE '(' expr . ')' ';'
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ')'    shift, and go to state 127
+
+
+state 104
+
+   48 stmt: ID ASSIGN_OP expr . ';'
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ';'    shift, and go to state 128
+
+
+state 105
+
+   49 stmt: ID '[' expr . ']' ASSIGN_OP expr ';'
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ']'    shift, and go to state 129
+
+
+state 106
+
+   55 stmt: WHILE '(' expr . ')' DO stmts ENDWHILE ';'
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ')'    shift, and go to state 130
+
+
+state 107
+
+   53 stmt: IF '(' expr . ')' THEN stmts ENDIF ';'
+   54     | IF '(' expr . ')' THEN stmts ELSE stmts ENDIF ';'
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ')'    shift, and go to state 131
+
+
+state 108
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   64     | S expr .
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    $default  reduce using rule 64 (expr)
+
+
+state 109
+
+   72 expr: ID '[' . expr ']'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 132
+
+
+state 110
+
+   73 expr: ID '(' . exprlist ')'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    $default  reduce using rule 76 (exprlist)
+
+    expr      go to state 133
+    exprlist  go to state 134
+
+
+state 111
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+   68     | NOT expr .
+
+    P    shift, and go to state 113
+    M    shift, and go to state 114
+    S    shift, and go to state 115
+    D    shift, and go to state 116
+    C    shift, and go to state 117
+    R    shift, and go to state 118
+    AND  shift, and go to state 119
+    OR   shift, and go to state 120
+
+    $default  reduce using rule 68 (expr)
+
+
+state 112
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   63     | '(' expr . ')'
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ')'    shift, and go to state 135
+
+
+state 113
+
+   57 expr: expr P . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 136
+
+
+state 114
+
+   58 expr: expr M . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 137
+
+
+state 115
+
+   59 expr: expr S . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 138
+
+
+state 116
+
+   61 expr: expr D . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 139
+
+
+state 117
+
+   65 expr: expr C . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 140
+
+
+state 118
+
+   60 expr: expr R . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 141
+
+
+state 119
+
+   66 expr: expr AND . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 142
+
+
+state 120
+
+   67 expr: expr OR . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 143
+
+
+state 121
+
+   62 expr: expr RELOP . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 144
+
+
+state 122
+
+   56 stmt: RETURN expr ';' .
+
+    $default  reduce using rule 56 (stmt)
+
+
+state 123
+
+   31 fDef: Rtype ID '(' fArgdef ')' '{' fBlock '}' .
+
+    $default  reduce using rule 31 (fDef)
+
+
+state 124
+
+   41 LIdlist: LIdlist ',' LId .
+
+    $default  reduce using rule 41 (LIdlist)
+
+
+state 125
+
+   51 stmt: READ '(' ID '[' . expr ']' ')' ';'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 145
+
+
+state 126
+
+   50 stmt: READ '(' ID ')' . ';'
+
+    ';'  shift, and go to state 146
+
+
+state 127
+
+   52 stmt: WRITE '(' expr ')' . ';'
+
+    ';'  shift, and go to state 147
+
+
+state 128
+
+   48 stmt: ID ASSIGN_OP expr ';' .
+
+    $default  reduce using rule 48 (stmt)
+
+
+state 129
+
+   49 stmt: ID '[' expr ']' . ASSIGN_OP expr ';'
+
+    ASSIGN_OP  shift, and go to state 148
+
+
+state 130
+
+   55 stmt: WHILE '(' expr ')' . DO stmts ENDWHILE ';'
+
+    DO  shift, and go to state 149
+
+
+state 131
+
+   53 stmt: IF '(' expr ')' . THEN stmts ENDIF ';'
+   54     | IF '(' expr ')' . THEN stmts ELSE stmts ENDIF ';'
+
+    THEN  shift, and go to state 150
+
+
+state 132
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+   72     | ID '[' expr . ']'
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ']'    shift, and go to state 151
+
+
+state 133
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+   74 exprlist: expr .
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+
+    $default  reduce using rule 74 (exprlist)
+
+
+state 134
+
+   73 expr: ID '(' exprlist . ')'
+   75 exprlist: exprlist . ',' expr
+
+    ','  shift, and go to state 152
+    ')'  shift, and go to state 153
+
+
+state 135
+
+   63 expr: '(' expr ')' .
+
+    $default  reduce using rule 63 (expr)
+
+
+state 136
+
+   57 expr: expr . P expr
+   57     | expr P expr .
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    M  shift, and go to state 114
+    D  shift, and go to state 116
+    C  shift, and go to state 117
+    R  shift, and go to state 118
+
+    $default  reduce using rule 57 (expr)
+
+
+state 137
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   58     | expr M expr .
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    C  shift, and go to state 117
+    R  shift, and go to state 118
+
+    $default  reduce using rule 58 (expr)
+
+
+state 138
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   59     | expr S expr .
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    M  shift, and go to state 114
+    D  shift, and go to state 116
+    C  shift, and go to state 117
+    R  shift, and go to state 118
+
+    $default  reduce using rule 59 (expr)
+
+
+state 139
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   61     | expr D expr .
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    C  shift, and go to state 117
+    R  shift, and go to state 118
+
+    $default  reduce using rule 61 (expr)
+
+
+state 140
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   65     | expr C expr .
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    R  shift, and go to state 118
+
+    C  error (nonassociative)
+
+    $default  reduce using rule 65 (expr)
+
+
+state 141
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   60     | expr R expr .
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    R  error (nonassociative)
+
+    $default  reduce using rule 60 (expr)
+
+
+state 142
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   66     | expr AND expr .
+   67     | expr . OR expr
+
+    P  shift, and go to state 113
+    M  shift, and go to state 114
+    S  shift, and go to state 115
+    D  shift, and go to state 116
+    C  shift, and go to state 117
+    R  shift, and go to state 118
+
+    $default  reduce using rule 66 (expr)
+
+
+state 143
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+   67     | expr OR expr .
+
+    P  shift, and go to state 113
+    M  shift, and go to state 114
+    S  shift, and go to state 115
+    D  shift, and go to state 116
+    C  shift, and go to state 117
+    R  shift, and go to state 118
+
+    $default  reduce using rule 67 (expr)
+
+
+state 144
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   62     | expr RELOP expr .
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P    shift, and go to state 113
+    M    shift, and go to state 114
+    S    shift, and go to state 115
+    D    shift, and go to state 116
+    C    shift, and go to state 117
+    R    shift, and go to state 118
+    AND  shift, and go to state 119
+    OR   shift, and go to state 120
+
+    $default  reduce using rule 62 (expr)
+
+
+state 145
+
+   51 stmt: READ '(' ID '[' expr . ']' ')' ';'
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ']'    shift, and go to state 154
+
+
+state 146
+
+   50 stmt: READ '(' ID ')' ';' .
+
+    $default  reduce using rule 50 (stmt)
+
+
+state 147
+
+   52 stmt: WRITE '(' expr ')' ';' .
+
+    $default  reduce using rule 52 (stmt)
+
+
+state 148
+
+   49 stmt: ID '[' expr ']' ASSIGN_OP . expr ';'
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 155
+
+
+state 149
+
+   55 stmt: WHILE '(' expr ')' DO . stmts ENDWHILE ';'
+
+    READ    shift, and go to state 65
+    WRITE   shift, and go to state 66
+    ID      shift, and go to state 67
+    WHILE   shift, and go to state 68
+    IF      shift, and go to state 69
+    RETURN  shift, and go to state 70
+
+    stmts  go to state 156
+    stmt   go to state 73
+
+
+state 150
+
+   53 stmt: IF '(' expr ')' THEN . stmts ENDIF ';'
+   54     | IF '(' expr ')' THEN . stmts ELSE stmts ENDIF ';'
+
+    READ    shift, and go to state 65
+    WRITE   shift, and go to state 66
+    ID      shift, and go to state 67
+    WHILE   shift, and go to state 68
+    IF      shift, and go to state 69
+    RETURN  shift, and go to state 70
+
+    stmts  go to state 157
+    stmt   go to state 73
+
+
+state 151
+
+   72 expr: ID '[' expr ']' .
+
+    $default  reduce using rule 72 (expr)
+
+
+state 152
+
+   75 exprlist: exprlist ',' . expr
+
+    NUMBER          shift, and go to state 90
+    BOOLEAN_NUMBER  shift, and go to state 91
+    S               shift, and go to state 92
+    ID              shift, and go to state 93
+    NOT             shift, and go to state 94
+    '('             shift, and go to state 95
+
+    expr  go to state 158
+
+
+state 153
+
+   73 expr: ID '(' exprlist ')' .
+
+    $default  reduce using rule 73 (expr)
+
+
+state 154
+
+   51 stmt: READ '(' ID '[' expr ']' . ')' ';'
+
+    ')'  shift, and go to state 159
+
+
+state 155
+
+   49 stmt: ID '[' expr ']' ASSIGN_OP expr . ';'
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+    ';'    shift, and go to state 160
+
+
+state 156
+
+   46 stmts: stmts . stmt
+   55 stmt: WHILE '(' expr ')' DO stmts . ENDWHILE ';'
+
+    READ      shift, and go to state 65
+    WRITE     shift, and go to state 66
+    ID        shift, and go to state 67
+    WHILE     shift, and go to state 68
+    ENDWHILE  shift, and go to state 161
+    IF        shift, and go to state 69
+    RETURN    shift, and go to state 70
+
+    stmt  go to state 98
+
+
+state 157
+
+   46 stmts: stmts . stmt
+   53 stmt: IF '(' expr ')' THEN stmts . ENDIF ';'
+   54     | IF '(' expr ')' THEN stmts . ELSE stmts ENDIF ';'
+
+    READ    shift, and go to state 65
+    WRITE   shift, and go to state 66
+    ID      shift, and go to state 67
+    WHILE   shift, and go to state 68
+    IF      shift, and go to state 69
+    ENDIF   shift, and go to state 162
+    ELSE    shift, and go to state 163
+    RETURN  shift, and go to state 70
+
+    stmt  go to state 98
+
+
+state 158
+
+   57 expr: expr . P expr
+   58     | expr . M expr
+   59     | expr . S expr
+   60     | expr . R expr
+   61     | expr . D expr
+   62     | expr . RELOP expr
+   65     | expr . C expr
+   66     | expr . AND expr
+   67     | expr . OR expr
+   75 exprlist: exprlist ',' expr .
+
+    P      shift, and go to state 113
+    M      shift, and go to state 114
+    S      shift, and go to state 115
+    D      shift, and go to state 116
+    C      shift, and go to state 117
+    R      shift, and go to state 118
+    AND    shift, and go to state 119
+    OR     shift, and go to state 120
+    RELOP  shift, and go to state 121
+
+    $default  reduce using rule 75 (exprlist)
+
+
+state 159
+
+   51 stmt: READ '(' ID '[' expr ']' ')' . ';'
+
+    ';'  shift, and go to state 164
+
+
+state 160
+
+   49 stmt: ID '[' expr ']' ASSIGN_OP expr ';' .
+
+    $default  reduce using rule 49 (stmt)
+
+
+state 161
+
+   55 stmt: WHILE '(' expr ')' DO stmts ENDWHILE . ';'
+
+    ';'  shift, and go to state 165
+
+
+state 162
+
+   53 stmt: IF '(' expr ')' THEN stmts ENDIF . ';'
+
+    ';'  shift, and go to state 166
+
+
+state 163
+
+   54 stmt: IF '(' expr ')' THEN stmts ELSE . stmts ENDIF ';'
+
+    READ    shift, and go to state 65
+    WRITE   shift, and go to state 66
+    ID      shift, and go to state 67
+    WHILE   shift, and go to state 68
+    IF      shift, and go to state 69
+    RETURN  shift, and go to state 70
+
+    stmts  go to state 167
+    stmt   go to state 73
+
+
+state 164
+
+   51 stmt: READ '(' ID '[' expr ']' ')' ';' .
+
+    $default  reduce using rule 51 (stmt)
+
+
+state 165
+
+   55 stmt: WHILE '(' expr ')' DO stmts ENDWHILE ';' .
+
+    $default  reduce using rule 55 (stmt)
+
+
+state 166
+
+   53 stmt: IF '(' expr ')' THEN stmts ENDIF ';' .
+
+    $default  reduce using rule 53 (stmt)
+
+
+state 167
+
+   46 stmts: stmts . stmt
+   54 stmt: IF '(' expr ')' THEN stmts ELSE stmts . ENDIF ';'
+
+    READ    shift, and go to state 65
+    WRITE   shift, and go to state 66
+    ID      shift, and go to state 67
+    WHILE   shift, and go to state 68
+    IF      shift, and go to state 69
+    ENDIF   shift, and go to state 168
+    RETURN  shift, and go to state 70
+
+    stmt  go to state 98
+
+
+state 168
+
+   54 stmt: IF '(' expr ')' THEN stmts ELSE stmts ENDIF . ';'
+
+    ';'  shift, and go to state 169
+
+
+state 169
+
+   54 stmt: IF '(' expr ')' THEN stmts ELSE stmts ENDIF ';' .
+
+    $default  reduce using rule 54 (stmt)
