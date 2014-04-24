@@ -88,7 +88,7 @@ void Linstall(char * NAME,int TYPE);
 int regcount = -1;
 int typeval;
 int arg_typeval;
-int ret_typeval;
+int ret_typeval = 1; // for main function by default
 
 struct Argument_Struct *headArg = NULL;
 struct Argument_Struct *newArg;
@@ -300,13 +300,13 @@ fDef      : Rtype ID '(' fArgdef ')' '{' fBlock '}'   {  fnDefCheck(ret_typeval,
 							 fprintf(fp,"\nMOV BP,SP");
 							 int i=1;
 							 for(i=1;i<memcount;i++)  //pushing the local variable ,as for function memcount starts from 1
-							  	fprintf(fp,"\nPUSH R%d",regcount+1);
+							  	fprintf(fp,"\nPUSH R%d",0);
 							 
 							headArg=NULL;  // job of headArg is completed(for fnDefCheck) so now initialize it with NULL 
 							calculate(temp_head); // print code for the body of the function.
 							memcount=1;
 							 root_L= NULL;  //
-							// temp_head=NULL;
+							 temp_head=NULL;
                                                          fclose(fp);
                                                                  }
 
@@ -602,11 +602,12 @@ expr 	:  expr P expr				{	if( $1->TYPE == $2->TYPE && $2->TYPE == $3->TYPE )
        |ID '('exprlist ')'                {    
 	        
                                                      struct Gsymbol_table* gtemp = GLOOKUP($1->NAME);
+                                                      printf("%d %s - ",gtemp->BINDING,gtemp->NAME);
 						      if(gtemp==NULL || gtemp->SIZE!=0) yyerror("Undefined Function");
 						      else
 						       { 
                                                          arg_parameter = $3;
-                                                         arg_check(gtemp->ARG_LIST);
+                                                         arg_check(gtemp->ARG_LIST); //check the arguments for type and passing type using global symbol table
                                                       if(arg_parameter)
                                                          yyerror("mismatch argument in function call");
                                                          
@@ -675,10 +676,10 @@ void Ginstall(char * NAME,int TYPE,int SIZE, struct Argument_Struct *ARGLIST)
 	   temp->SIZE = SIZE; 
            temp->ARG_LIST = ARGLIST;
           
-              
+           
 	   temp->BINDING = memcount;
            memcount = memcount+SIZE;
-	     
+	    
 	   
 	   temp->NEXT = root_G;
 	   root_G = temp;
@@ -1145,7 +1146,7 @@ int calculate(struct node *t)
    
              else if (t->NODE_TYPE == FUNCTION_NODE)
                 {
-                       int temp_regcount = regcount;
+                       int temp_regcount = regcount;  // for keeping the track of pushing and poping the register
                        while(regcount >=0)
                        {
 				fprintf(fp,"\nPUSH R%d", regcount);

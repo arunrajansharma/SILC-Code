@@ -157,7 +157,7 @@ void Linstall(char * NAME,int TYPE);
 int regcount = -1;
 int typeval;
 int arg_typeval;
-int ret_typeval;
+int ret_typeval = 1; // for main function by default
 
 struct Argument_Struct *headArg = NULL;
 struct Argument_Struct *newArg;
@@ -713,7 +713,7 @@ static const yytype_uint16 yyrline[] =
      346,   348,   351,   352,   356,   359,   360,   362,   367,   370,
      393,   409,   429,   443,   450,   460,   470,   480,   491,   497,
      502,   507,   512,   517,   527,   529,   534,   539,   545,   550,
-     557,   559,   566,   588,   602,   626,   632,   636
+     557,   559,   566,   588,   602,   627,   633,   637
 };
 #endif
 
@@ -2014,13 +2014,13 @@ yyreduce:
 							 fprintf(fp,"\nMOV BP,SP");
 							 int i=1;
 							 for(i=1;i<memcount;i++)  //pushing the local variable ,as for function memcount starts from 1
-							  	fprintf(fp,"\nPUSH R%d",regcount+1);
+							  	fprintf(fp,"\nPUSH R%d",0);
 							 
 							headArg=NULL;  // job of headArg is completed(for fnDefCheck) so now initialize it with NULL 
 							calculate(temp_head); // print code for the body of the function.
 							memcount=1;
 							 root_L= NULL;  //
-							// temp_head=NULL;
+							 temp_head=NULL;
                                                          fclose(fp);
                                                                  }
     break;
@@ -2523,11 +2523,12 @@ yyreduce:
     {    
 	        
                                                      struct Gsymbol_table* gtemp = GLOOKUP((yyvsp[(1) - (4)].ptr)->NAME);
+                                                      printf("%d %s - ",gtemp->BINDING,gtemp->NAME);
 						      if(gtemp==NULL || gtemp->SIZE!=0) yyerror("Undefined Function");
 						      else
 						       { 
                                                          arg_parameter = (yyvsp[(3) - (4)].ptr);
-                                                         arg_check(gtemp->ARG_LIST);
+                                                         arg_check(gtemp->ARG_LIST); //check the arguments for type and passing type using global symbol table
                                                       if(arg_parameter)
                                                          yyerror("mismatch argument in function call");
                                                          
@@ -2545,7 +2546,7 @@ yyreduce:
   case 75:
 
 /* Line 1806 of yacc.c  */
-#line 626 "cg_calc.y"
+#line 627 "cg_calc.y"
     {   struct node * t1 = malloc(sizeof(struct node));
                                        t1->NODE_TYPE = VOID ;
                                        (yyval.ptr) = makenode(t1,NULL,(yyvsp[(1) - (1)].ptr),NULL);                                    
@@ -2556,7 +2557,7 @@ yyreduce:
   case 76:
 
 /* Line 1806 of yacc.c  */
-#line 632 "cg_calc.y"
+#line 633 "cg_calc.y"
     {    struct node * t1 = malloc(sizeof(struct node));
                                        t1->NODE_TYPE = VOID ;
                                        (yyval.ptr) = makenode(t1,(yyvsp[(1) - (3)].ptr),(yyvsp[(3) - (3)].ptr),NULL);   
@@ -2566,14 +2567,14 @@ yyreduce:
   case 77:
 
 /* Line 1806 of yacc.c  */
-#line 636 "cg_calc.y"
+#line 637 "cg_calc.y"
     { (yyval.ptr) = NULL ; }
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 2577 "y.tab.c"
+#line 2578 "y.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2804,7 +2805,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 640 "cg_calc.y"
+#line 641 "cg_calc.y"
 
 
 #include "lex.yy.c"
@@ -2843,10 +2844,10 @@ void Ginstall(char * NAME,int TYPE,int SIZE, struct Argument_Struct *ARGLIST)
 	   temp->SIZE = SIZE; 
            temp->ARG_LIST = ARGLIST;
           
-              
+           
 	   temp->BINDING = memcount;
            memcount = memcount+SIZE;
-	     
+	    
 	   
 	   temp->NEXT = root_G;
 	   root_G = temp;
@@ -3313,7 +3314,7 @@ int calculate(struct node *t)
    
              else if (t->NODE_TYPE == FUNCTION_NODE)
                 {
-                       int temp_regcount = regcount;
+                       int temp_regcount = regcount;  // for keeping the track of pushing and poping the register
                        while(regcount >=0)
                        {
 				fprintf(fp,"\nPUSH R%d", regcount);
